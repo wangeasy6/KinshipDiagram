@@ -1,0 +1,14 @@
+style=kr
+indent=spaces=4
+indent-labels
+pad-oper
+unpad-paren
+pad-header
+convert-tabs
+indent-preprocessor
+align-pointer=type
+align-reference=type
+keep-one-line-blocks
+keep-one-line-statements
+attach-namespaces
+max-instatement-indent=120
