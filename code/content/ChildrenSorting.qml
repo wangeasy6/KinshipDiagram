@@ -18,17 +18,31 @@ Rectangle {
     property var motherP
 
     property int isSync
-    property Item theItem: null
+    property Item onPressedItem: null
     property bool isChanged: false
 
-    // layer.enabled: true
-    // layer.effect: DropShadow {
-    //     transparentBorder: true
-    //     horizontalOffset: 15
-    //     verticalOffset: 20
-    //     color: "#C0CCCCCC"
-    //     spread: 0
-    // }
+    layer.enabled: true
+    layer.effect: DropShadow {
+        transparentBorder: true
+        horizontalOffset: 15
+        verticalOffset: 20
+        color: "#C0CCCCCC"
+        spread: 0
+    }
+
+    MessageDialog {
+        id: isUnsaveDialog
+        title: "提示："
+        text: "放弃修改？"
+        buttons: MessageDialog.No | MessageDialog.Yes
+        property var replacement
+
+        onAccepted: {
+            thisPage.finished(false)
+            thisPage.destroy()
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 10
@@ -75,31 +89,34 @@ Rectangle {
                         // anchors.centerIn: parent
                         smooth: true
 
-                        onXChanged: {
-                            if (delegataRec != theItem)
-                                return
-                            var index_ = (theItem.x / 190).toFixed(0)
-                            if (index_ >= fatherList.count)
-                                index_ = fatherList.count - 1
-                            if (index_ < 0)
-                                index_ = 0
-                            if (Number(index_) !== Number(index)) {
-                                fatherList.move(index, index_, 1)
-                            }
-                        }
-
                         MouseArea {
                             anchors.fill: parent
                             drag.target: delegataRec
                             drag.axis: Drag.XAxis
                             hoverEnabled: true
+
                             onPressed: {
-                                theItem = delegataRec
-                                console.log("press:", index, pinfo.name)
+                                onPressedItem = delegataRec
+                                onPressedItem.z = 2
+                                // console.log("press:", index, pinfo.name)
                             }
+
                             onReleased: {
-                                delegataRec.x = index * 190
-                                console.log("release:", index, pinfo.name)
+                                if (delegataRec != onPressedItem)
+                                    return
+                                onPressedItem.z = 1
+                                var index_ = (onPressedItem.x / 190).toFixed(0)
+                                if (index_ >= fatherList.count)
+                                    index_ = fatherList.count - 1
+                                if (index_ < 0)
+                                    index_ = 0
+                                if (Number(index_) !== Number(index)) {
+                                    fatherList.move(index, index_, 1)
+                                }
+                                onPressedItem.x = index * 190
+
+                                // console.log("release:", index, pinfo.name)
+                                setUnsavedFlag()
                             }
                         }
 
@@ -190,31 +207,34 @@ Rectangle {
                         // anchors.centerIn: parent
                         smooth: true
 
-                        onXChanged: {
-                            if (delegataRec2 != theItem)
-                                return
-                            var index_ = (theItem.x / 190).toFixed(0)
-                            if (index_ >= motherList.count)
-                                index_ = motherList.count - 1
-                            if (index_ < 0)
-                                index_ = 0
-                            if (Number(index_) !== Number(index)) {
-                                motherList.move(index, index_, 1)
-                            }
-                        }
-
                         MouseArea {
                             anchors.fill: parent
                             drag.target: delegataRec2
                             drag.axis: Drag.XAxis
                             hoverEnabled: true
+
                             onPressed: {
-                                theItem = delegataRec2
-                                console.log("press:", index, pinfo.name)
+                                onPressedItem = delegataRec2
+                                onPressedItem.z = 2
+                                // console.log("press:", index, pinfo.name)
                             }
+
                             onReleased: {
-                                delegataRec2.x = index * 190
-                                console.log("release:", index, pinfo.name)
+                                if (delegataRec2 != onPressedItem)
+                                    return
+                                onPressedItem.z = 1
+                                var index_ = (onPressedItem.x / 190).toFixed(0)
+                                if (index_ >= motherList.count)
+                                    index_ = motherList.count - 1
+                                if (index_ < 0)
+                                    index_ = 0
+                                if (Number(index_) !== Number(index)) {
+                                    motherList.move(index, index_, 1)
+                                }
+                                onPressedItem.x = index * 190
+
+                                // console.log("release:", index, pinfo.name)
+                                setUnsavedFlag()
                             }
                         }
 
@@ -286,9 +306,14 @@ Rectangle {
                 font.pointSize: 16
 
                 onClicked: {
-                    for (var i = 0; i < fatherList.count; i++) {
-                        console.log(i, fatherList.get(i).pinfo.id,
-                                    fatherList.get(i).pinfo.name)
+                    // for (var i = 0; i < fatherList.count; i++) {
+                    //     console.log(i, fatherList.get(i).pinfo.id,
+                    //                 fatherList.get(i).pinfo.name)
+                    // }
+
+                    if (btSaveInfo.unsavedFlag) {
+                        isUnsaveDialog.open()
+                        return
                     }
 
                     thisPage.finished(false)
@@ -307,10 +332,20 @@ Rectangle {
                 leftPadding: 40
                 // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 font.pointSize: 16
+                property bool unsavedFlag: false
+
+                onUnsavedFlagChanged: {
+                    if (unsavedFlag) {
+                        text = "保存<font color='red'>⚹</font>"
+                    } else {
+                        text = "保存"
+                    }
+                }
 
                 onClicked: {
-                    saveData()
-                    thisPage.finished(isChanged)
+                    if (unsavedFlag)
+                        saveData()
+                    thisPage.finished(unsavedFlag)
                     thisPage.destroy()
                 }
             }
@@ -374,6 +409,35 @@ Rectangle {
                                   })
             }
         }
+    }
+
+    function setUnsavedFlag() {
+        var i
+        var flag = false
+        if (fatherList.count > 1) {
+            for (i = 0; i < fatherList.count; i++) {
+                if (fatherList.get(i).pinfo.id !== fatherP.children[i]) {
+                    btSaveInfo.unsavedFlag = true
+                    return
+                }
+            }
+
+            if (isSync === 0) {
+                btSaveInfo.unsavedFlag = false
+                return
+            }
+        }
+
+        if (motherList.count > 1) {
+            for (i = 0; i < motherList.count; i++) {
+                if (motherList.get(i).pinfo.id !== motherP.children[i]) {
+                    btSaveInfo.unsavedFlag = true
+                    return
+                }
+            }
+        }
+
+        btSaveInfo.unsavedFlag = false
     }
 
     function saveData() {

@@ -143,6 +143,18 @@ Rectangle {
         }
     }
 
+    MessageDialog {
+        id: isUnsaveDialog
+        title: "提示："
+        text: "放弃修改？"
+        buttons: MessageDialog.No | MessageDialog.Yes
+        property var replacement
+
+        onAccepted: {
+            setSidePersonInfo(replacement)
+        }
+    }
+
     Cropping {
         id: cropForm
         visible: false
@@ -159,9 +171,18 @@ Rectangle {
     }
 
     function setSidePerson(p) {
-        console.log("setSidePerson")
+        if (btSaveInfo.unsavedFlag) {
+            isUnsaveDialog.replacement = p
+            isUnsaveDialog.open()
+        } else
+            setSidePersonInfo(p)
+    }
+
+    function setSidePersonInfo(p) {
+        // console.log("setSidePerson")
         if (selectedPerson)
             selectedPerson.selected = false
+
         selectedPerson = p
         selectedPerson.selected = true
         textAvatarPath.text = selectedPerson.avatarPath
@@ -196,8 +217,8 @@ Rectangle {
         // anchors.margins: 20
         anchors.leftMargin: 20
         anchors.rightMargin: 20
-        anchors.topMargin : 0
-        anchors.bottomMargin : 20
+        anchors.topMargin: 0
+        anchors.bottomMargin: 20
         spacing: 10
 
         RowLayout {
@@ -689,10 +710,20 @@ Rectangle {
                                     cropForm.avatarPath = text
                                     cropForm.rename = textName.text + ".png"
                                     cropForm.visible = true
-                                }
-                                else {
+                                } else {
                                     errorMD.text = "请先填写人员姓名！"
                                     errorMD.visible = true
+                                }
+                            }
+
+                            onTextChanged: {
+                                if (selectedPerson) {
+                                    if (text !== selectedPerson.avatarPath)
+                                        btSaveInfo.unsavedList[0] = 1
+                                    else
+                                        btSaveInfo.unsavedList[0] = 0
+
+                                    setUnsavedFlag()
                                 }
                             }
                         }
@@ -762,6 +793,17 @@ Rectangle {
                                 Layout.minimumWidth: 90
                                 Layout.fillWidth: true
                                 text: selectedPerson ? selectedPerson.name : ""
+
+                                onTextChanged: {
+                                    if (selectedPerson) {
+                                        if (text !== selectedPerson.name)
+                                            btSaveInfo.unsavedList[1] = 1
+                                        else
+                                            btSaveInfo.unsavedList[1] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
 
                             Button {
@@ -831,6 +873,17 @@ Rectangle {
                                 Layout.fillWidth: true
                                 // placeholderText: qsTr("Text Field")
                                 text: selectedPerson ? selectedPerson.pi.call : ""
+
+                                onTextChanged: {
+                                    if (selectedPerson) {
+                                        if (text !== selectedPerson.pi.call)
+                                            btSaveInfo.unsavedList[2] = 1
+                                        else
+                                            btSaveInfo.unsavedList[2] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
 
                             Button {
@@ -876,6 +929,17 @@ Rectangle {
                             YinYangSwitch {
                                 id: birthSwitch
                                 checked: selectedPerson ? selectedPerson.pi.birthTraditional : false
+
+                                onCheckedChanged: {
+                                    if (selectedPerson) {
+                                        if (checked !== selectedPerson.pi.birthTraditional)
+                                            btSaveInfo.unsavedList[3] = 1
+                                        else
+                                            btSaveInfo.unsavedList[3] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
 
                             TextField {
@@ -883,6 +947,17 @@ Rectangle {
                                 height: 42
                                 Layout.fillWidth: true
                                 text: selectedPerson ? selectedPerson.pi.birthday : ""
+
+                                onTextChanged: {
+                                    if (selectedPerson) {
+                                        if (text !== selectedPerson.pi.birthday)
+                                            btSaveInfo.unsavedList[4] = 1
+                                        else
+                                            btSaveInfo.unsavedList[4] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
                         }
 
@@ -897,6 +972,17 @@ Rectangle {
                             checked: selectedPerson ? selectedPerson.pi.isDead : false
                             text: switchDeath.checked ? qsTr("是") : qsTr("否")
                             font.pointSize: 10
+
+                            onCheckedChanged: {
+                                if (selectedPerson) {
+                                    if (checked !== selectedPerson.pi.isDead)
+                                        btSaveInfo.unsavedList[5] = 1
+                                    else
+                                        btSaveInfo.unsavedList[5] = 0
+
+                                    setUnsavedFlag()
+                                }
+                            }
                         }
 
                         Label {
@@ -914,6 +1000,17 @@ Rectangle {
                             YinYangSwitch {
                                 id: deathSwitch
                                 checked: selectedPerson ? selectedPerson.pi.deathTraditional : false
+
+                                onCheckedChanged: {
+                                    if (selectedPerson) {
+                                        if (checked !== selectedPerson.pi.deathTraditional)
+                                            btSaveInfo.unsavedList[6] = 1
+                                        else
+                                            btSaveInfo.unsavedList[6] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
 
                             TextField {
@@ -921,6 +1018,17 @@ Rectangle {
                                 height: 42
                                 Layout.fillWidth: true
                                 text: selectedPerson ? selectedPerson.pi.death : ""
+
+                                onTextChanged: {
+                                    if (selectedPerson) {
+                                        if (text !== selectedPerson.pi.death)
+                                            btSaveInfo.unsavedList[7] = 1
+                                        else
+                                            btSaveInfo.unsavedList[7] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
                         }
 
@@ -948,6 +1056,17 @@ Rectangle {
                                 wrapMode: Text.Wrap
 
                                 text: selectedPerson ? selectedPerson.pi.notes : ""
+
+                                onTextChanged: {
+                                    if (selectedPerson) {
+                                        if (text !== selectedPerson.pi.notes)
+                                            btSaveInfo.unsavedList[8] = 1
+                                        else
+                                            btSaveInfo.unsavedList[8] = 0
+
+                                        setUnsavedFlag()
+                                    }
+                                }
                             }
                         }
                     }
@@ -963,9 +1082,19 @@ Rectangle {
                         leftPadding: 40
                         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         font.pointSize: 16
+                        property var unsavedList: [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                        property bool unsavedFlag: false
+
+                        onUnsavedFlagChanged: {
+                            if (unsavedFlag) {
+                                text = "保存<font color='red'>⚹</font>"
+                            } else {
+                                text = "保存"
+                            }
+                        }
 
                         onClicked: {
-                            if (selectedPerson) {
+                            if (selectedPerson && unsavedFlag) {
                                 selectedPerson.avatarPath = textAvatarPath.text
                                 var savePi = selectedPerson.pi
                                 if (textAvatarPath.text === "qrc:/qt/qml/content/icons/person.svg")
@@ -1306,6 +1435,17 @@ Rectangle {
                 }
             }
         }
+    }
+
+    function setUnsavedFlag() {
+        var n = 0
+        for (var i = 0; i < btSaveInfo.unsavedList.length; i++) {
+            n += btSaveInfo.unsavedList[i]
+        }
+        if (n)
+            btSaveInfo.unsavedFlag = true
+        else
+            btSaveInfo.unsavedFlag = false
     }
 
     function clearRvalueOfPersonList() {
