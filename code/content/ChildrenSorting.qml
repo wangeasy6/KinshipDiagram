@@ -343,8 +343,10 @@ Rectangle {
                 }
 
                 onClicked: {
-                    if (unsavedFlag)
+                    if (unsavedFlag) {
                         saveData()
+                        unsavedFlag = false
+                    }
                     thisPage.finished(unsavedFlag)
                     thisPage.destroy()
                 }

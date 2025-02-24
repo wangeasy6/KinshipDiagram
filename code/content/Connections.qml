@@ -4,6 +4,7 @@ import QtQuick.Shapes 1.2
 Shape {
     id: thisPage
     objectName: "CT"
+    antialiasing: true
     property var node1: null
     property var node1x: node1 ? node1.x : 0
     property var node1y: node1 ? node1.y : 0
@@ -91,9 +92,11 @@ Shape {
             if (sp.w !== 0 && sp.h !== 0) {
                 radius = sp.w < sp.h ? (sp.w / 4) : (sp.h / 4)
                 line1.x = sp.startX
-                line1.y = sp.startY + (sp.h - radius * 2) / 2
-                if (node1.gender)
-                    line1.y -= 8
+                // line1.y = sp.startY + (sp.h - radius * 2) / 2
+                if (sp.h === 80)
+                    line1.y = sp.startY + 40 - radius
+                else
+                    line1.y = sp.startY + 20 - radius
                 line1.relativeY = line1.y - sp.startY
                 arc1.radiusX = radius
                 arc1.radiusY = radius

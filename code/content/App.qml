@@ -7,11 +7,11 @@ import KinshipDiagramEditor
 
 Window {
     width: 1920
-    height: 1080
-    minimumWidth: 1920
-    maximumWidth: 1920
-    minimumHeight: 1080
-    maximumHeight: 1080
+    height: 1040
+    minimumWidth: 1280
+    minimumHeight: 900
+    // maximumWidth: 2560
+    // maximumHeight: 1440
 
     visible: true
     title: "亲戚图谱"

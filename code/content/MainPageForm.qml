@@ -20,10 +20,9 @@ import easy.qt.FileUtils 0.1
 
 Rectangle {
     id: mainRect
-    // width: Constants.width
-    // height: Constants.height
-    width: 1920
-    height: 1080
+    width: parent.width
+    height: parent.height
+    anchors.centerIn: parent
     color: "#ffffff"
 
     property var selectedPerson: null
@@ -214,6 +213,7 @@ Rectangle {
     ColumnLayout {
         id: mainLayout
         anchors.fill: mainRect
+        anchors.centerIn: mainRect
         // anchors.margins: 20
         anchors.leftMargin: 20
         anchors.rightMargin: 20
@@ -223,8 +223,8 @@ Rectangle {
 
         RowLayout {
             id: headerLayout
-            width: (mainRect.width - 40)
-            height: 140
+            Layout.fillWidth: true
+            Layout.preferredHeight: 80
 
             Row {
                 id: sysToolBar
@@ -273,10 +273,17 @@ Rectangle {
                 font.pointSize: 14
 
                 onCheckedChanged: {
-                    if (checked)
+                    if (checked) {
+                        // startListModel.clear()
+                        // endListModel.clear()
+                        startInput.text = ""
+                        endInput.text = ""
                         searchSwipeView.setCurrentIndex(0)
-                    else
+                    } else {
+                        // resultModel.clear()
+                        searchInput.text = ""
                         searchSwipeView.setCurrentIndex(1)
+                    }
                 }
             }
 
@@ -320,7 +327,7 @@ Rectangle {
                         ListView {
                             id: resultListView
                             parent: mainRect
-                            x: searchSwipeView.x
+                            x: searchSwipeView.x + 20
                             y: searchInput.y + searchInput.height + 5
                             width: 140
                             // height: contentHeight
@@ -408,10 +415,10 @@ Rectangle {
 
                             onTextChanged: {
                                 startListModel.clear()
-                                startListModel.append({
-                                                          "name": "主人公"
-                                                      })
                                 if (text) {
+                                    startListModel.append({
+                                                              "name": "主人公"
+                                                          })
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
                                             startListModel.append(allPerson[i])
@@ -427,7 +434,7 @@ Rectangle {
                         ListView {
                             id: startListView
                             parent: mainRect
-                            x: searchSwipeView.x + startInput.x
+                            x: searchSwipeView.x + startInput.x + 20
                             y: startInput.y + startInput.height + 5
                             width: 140
                             height: 300
@@ -487,10 +494,10 @@ Rectangle {
 
                             onTextChanged: {
                                 endListModel.clear()
-                                endListModel.append({
-                                                        "name": "主人公"
-                                                    })
                                 if (text) {
+                                    endListModel.append({
+                                                            "name": "主人公"
+                                                        })
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
                                             endListModel.append(allPerson[i])
@@ -506,7 +513,7 @@ Rectangle {
                         ListView {
                             id: endListView
                             parent: mainRect
-                            x: searchSwipeView.x + endInput.x
+                            x: searchSwipeView.x + endInput.x + 20
                             y: endInput.y + endInput.height + 5
                             width: 140
                             // height: contentHeight
@@ -577,16 +584,16 @@ Rectangle {
 
         RowLayout {
             id: bodyLayout
-            height: 930
+            Layout.fillHeight: true
+            Layout.preferredHeight: 910
             Layout.fillWidth: true
             spacing: 15
 
             Rectangle {
                 id: drawRect
-                width: bodyLayout.width - sideRect.width - 15
-                height: parent.height
-                color: stack.visible ? "#a5a5a5" : "#f5f5f5"
                 Layout.fillWidth: true
+                Layout.fillHeight: true
+                color: stack.visible ? "#a5a5a5" : "#f5f5f5"
                 clip: true
 
                 StartProject {
@@ -665,15 +672,15 @@ Rectangle {
 
             Rectangle {
                 id: sideRect
-                width: 330
-                height: parent.height
+                Layout.preferredWidth: 330
+                Layout.fillHeight: true
                 color: "#f5f5f5"
 
                 ColumnLayout {
                     id: sideLayout
                     anchors.fill: parent
                     width: sideRect.width - 20
-                    height: sideRect.height
+                    Layout.fillHeight: true
                     Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
                     anchors.margins: 10
 
@@ -1074,14 +1081,13 @@ Rectangle {
                     Button {
                         id: btSaveInfo
                         text: qsTr("保存")
-                        Layout.bottomMargin: 10
-                        Layout.topMargin: 10
+                        Layout.bottomMargin: 5
                         bottomPadding: 12
                         topPadding: 12
                         rightPadding: 40
                         leftPadding: 40
                         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                        font.pointSize: 16
+                        font.pointSize: 15
                         property var unsavedList: [0, 0, 0, 0, 0, 0, 0, 0, 0]
                         property bool unsavedFlag: false
 
@@ -1116,6 +1122,7 @@ Rectangle {
                                         savePi.death = textDeath.text
                                 }
                                 pdb.updatePerson(savePi.id)
+                                unsavedFlag = false
                             }
                         }
                     }
@@ -1224,7 +1231,7 @@ Rectangle {
         radius: 5
         border.width: 0
         x: drawRect.x + drawRect.width - subToolRect.width
-        y: drawRect.y + drawRect.height + 10
+        y: drawRect.y + drawRect.height
 
         Row {
             id: subToolBar
@@ -1291,7 +1298,6 @@ Rectangle {
                 ToolTip.visible: hovered
 
                 onClicked: {
-                    console.log("btBack")
                     stack.pop()
                     stack.currentItem.restoreLastPos()
                     setSidePerson(stack.currentItem.mainPF)
@@ -1595,6 +1601,12 @@ Rectangle {
                        }, StackView.PushTransition)
         }
     }
+
+    // Component.onCompleted: {
+    //     console.log(mainLayout.width, mainLayout.height)
+    //     console.log(headerLayout.width, headerLayout.height)
+    //     console.log(bodyLayout.width, bodyLayout.height)
+    // }
 
     Component.onDestruction: {
         selectedPerson = null

@@ -167,12 +167,12 @@ function calculatePosition(load) {
     }
     if (type === connectType.MATE) {
         load["posX"] = p1.x + mateShiftX
-        load["posY"] = p1.y + 40
+        load["posY"] = p1.y + 30
     }
     if (type === connectType.EX) {
         let xPos = index * mateShiftX + mateShiftX
         load["posX"] = p1.x + xPos
-        load["posY"] = p1.y + 40
+        load["posY"] = p1.y + 30
     }
     if (type === connectType.CHILDREN) {
         let xPos = index * 300
