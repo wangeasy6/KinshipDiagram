@@ -64,11 +64,7 @@ PersonDB::PersonDB()
 PersonDB::~PersonDB()
 {
     qDebug() << "~PersonDB start.\r\n";
-    for (int i = 0; i < m_personList.length(); i++) {
-        if (m_personList[i])
-            delete m_personList[i];
-    }
-    m_personList.clear();
+    clearDB();
     qDebug() << "~PersonDB end.\r\n";
 }
 
@@ -201,10 +197,23 @@ bool PersonDB::initDB(const QString filePath)
 }
 
 
+void PersonDB::clearDB()
+{
+    m_errorMsg = "";
+    m_protagonistId = -1;
+    for (int i = 0; i < m_personList.length(); i++) {
+        if (m_personList[i])
+            delete m_personList[i];
+    }
+    m_personList.clear();
+}
+
+
 bool PersonDB::loadDB(QString dbPath)
 {
     if (m_pDb.isOpen()) {
-        return true;
+        clearDB();
+        m_pDb.close();
     }
 
     //建立并打开数据库

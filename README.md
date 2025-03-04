@@ -15,11 +15,13 @@
 
 ## Example
 
-以红楼梦为例，软件显示如下：
+以红楼梦为例，软件显示如下。
+
+主界面：
 
 ![example_main](examples/红楼梦-贾府/example_main.png)
 
-人员关系显示：
+人员关系路径：
 
 ![example_path](examples/红楼梦-贾府/example_path.png)
 

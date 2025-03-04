@@ -6,11 +6,13 @@ Shape {
     objectName: "CT"
     antialiasing: true
     property var node1: null
-    property var node1x: node1 ? node1.x : 0
-    property var node1y: node1 ? node1.y : 0
+    property var node1Selected: node1 ? node1.selected : false
+    // property var node1x: node1 ? node1.x : 0
+    // property var node1y: node1 ? node1.y : 0
     property var node2: null
-    property var node2x: node2 ? node2.x : 0
-    property var node2y: node2 ? node2.y : 0
+    property var node2Selected: node2 ? node2.selected : false
+    // property var node2x: node2 ? node2.x : 0
+    // property var node2y: node2 ? node2.y : 0
     property int type: 0
     z: 0
 
@@ -180,6 +182,28 @@ Shape {
             sp.strokeColor = node1.color
             sp.strokeStyle = ShapePath.DashLine
         }
+    }
+
+    function onNodeSelectedChanged() {
+        if (node1Selected || node2Selected) {
+            thisPage.z = 1
+            sp.strokeColor = "#9BCD9B"
+        } else {
+            thisPage.z = 0
+            if (node1.y > node2.y) {
+                sp.strokeColor = node2.color
+            } else {
+                sp.strokeColor = node1.color
+            }
+        }
+    }
+
+    onNode1SelectedChanged: {
+        onNodeSelectedChanged()
+    }
+
+    onNode2SelectedChanged: {
+        onNodeSelectedChanged()
     }
 
     // onNode1xChanged: {

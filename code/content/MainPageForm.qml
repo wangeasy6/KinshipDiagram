@@ -603,6 +603,7 @@ Rectangle {
                     historyList: conf.historyList
 
                     onOpenMap: path => {
+                                   selectedPerson = null
                                    stack.clear(StackView.Immediate)
                                    conf.updatePath(path)
                                    cropForm.pathPrefix = conf.dbPrefix

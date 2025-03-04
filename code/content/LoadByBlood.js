@@ -4,8 +4,8 @@ var gLoadedConnectList = new Set([])
 var gLoadingConnectQueue = []
 
 var gGeneration = 2
-var gXBoundary = [[-1, 3000], // index 0: R; 1: L
-                  [-1, 3000], [-1, 3000], [-1, 3000]]
+// index 0: R; 1: L
+var gXBoundary = [[-1, 3000], [-1, 3000], [-1, 3000], [-1, 3000]]
 var frameWidth = 0
 var gCenterPos = {
     "x": 0,
@@ -175,21 +175,20 @@ function calculatePosition(load) {
         load["posY"] = p1.y + 30
     }
     if (type === connectType.CHILDREN) {
-        let xPos = index * 300
+        load["posY"] = p1.y + 320
 
         let mateShift = load["pi"].marriages.length * mateShiftX
         if (load["pi"].marriages[0] === -1)
             mateShift -= mateShiftX
 
+        let xPos = index * 300
         var posX = getBoundary(load.generation, load.anchor)
         if (load.anchor) {
             load["posX"] = p1.x - xPos
             posX -= mateShift
-            load["posY"] = p1.y + 320
             load["posX"] = posX < load["posX"] ? posX : load["posX"]
         } else {
             load["posX"] = p1.x + xPos
-            load["posY"] = p1.y + 320
             load["posX"] = getPosX(load.generation, load.anchor, load["posX"])
         }
 
@@ -213,7 +212,7 @@ function addByDepth(pi, piPos, pdb, anchor) {
     {
         let type = i === 0 ? connectType.MATE : connectType.EX
         if (pi.marriages[i] !== -1 && !isLoadedPerson(pi.marriages[i])) {
-            if (pi.marriages[0] === -1) {
+            if (pi.marriages[0] === -1 || isLoadedPerson(pi.marriages[0])) {
                 node = {
                     "start": piPos,
                     "target": pi.marriages[i],
@@ -224,8 +223,7 @@ function addByDepth(pi, piPos, pdb, anchor) {
                     "posZ": 0,
                     "pi": pdb.getPerson(pi.marriages[i])
                 }
-            }
-            else {
+            } else {
                 node = {
                     "start": piPos,
                     "target": pi.marriages[i],
@@ -248,6 +246,7 @@ function addByDepth(pi, piPos, pdb, anchor) {
     if (gGeneration < 1)
         return
 
+    var children_index = 0
     if (anchor) // 1: To left
     {
         for (i = pi.children.length - 1; i >= 0; i--) {
@@ -257,7 +256,7 @@ function addByDepth(pi, piPos, pdb, anchor) {
                     "start": piPos,
                     "target": pi.children[i],
                     "type": connectType.CHILDREN,
-                    "index": pi.children.length - 1 - i,
+                    "index": children_index++,
                     "anchor": anchor,
                     "generation": gGeneration,
                     "posZ": 1,
@@ -282,7 +281,7 @@ function addByDepth(pi, piPos, pdb, anchor) {
                     "start": piPos,
                     "target": pi.children[i],
                     "type": connectType.CHILDREN,
-                    "index": i,
+                    "index": children_index++,
                     "anchor": anchor,
                     "generation": gGeneration,
                     "posZ": 1,

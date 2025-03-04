@@ -131,6 +131,7 @@ private:
     bool delPersonDB(int id);
     int getPersonLinks(const PersonInfo* p);
     bool initDB(const QString);
+    void clearDB();
     PersonInfo* getNextNewPerson();
 
 };
