@@ -1123,6 +1123,7 @@ Rectangle {
                                         savePi.death = textDeath.text
                                 }
                                 pdb.updatePerson(savePi.id)
+                                unsavedList.fill(0)
                                 unsavedFlag = false
                             }
                         }

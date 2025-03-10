@@ -28,7 +28,9 @@ Rectangle {
 
         onNewProject: (path, name) => {
                           pdb.newMap(path, name)
-                          openMap(path + "/" + name + "/" + name + ".sqlite3")
+                          var filePath = path + "/" + name + "/" + name + ".sqlite3"
+                          updateHistory(filePath)
+                          openMap(filePath)
                       }
     }
 
@@ -70,14 +72,15 @@ Rectangle {
                     nameFilters: ["DB Files (*.sqlite3)"]
 
                     onAccepted: {
-                        var fileStr = file.toString().replace("file:///", "")
+                        var filePath = file.toString().replace("file:///", "")
                         // fileStr.replace("file:///", "")
                         // if(fileStr.match("file:///"))
                         // {
                         //     fileStr = fileStr.replace("file:///", "")
                         // }
-                        console.log("You selected:", fileStr)
-                        openMap(fileStr)
+                        console.log("You selected:", filePath)
+                        updateHistory(filePath)
+                        openMap(filePath)
                     }
                 }
 
@@ -146,6 +149,7 @@ Rectangle {
                         clip: true
 
                         onClicked: {
+                            updateHistory(path)
                             openMap(path)
                         }
                     }
@@ -154,10 +158,22 @@ Rectangle {
         }
     }
 
-    // function openMap(path)
-    // {
-    //     console.log("open:", path)
-    // }
+    function updateHistory(path) {
+        var findIndex = 0
+        for (; findIndex < openedList.count; findIndex++) {
+            if (path === openedList.get(findIndex).path)
+                break
+        }
+
+        console.log(findIndex, ",", openedList.count)
+        if (findIndex === openedList.count)
+            openedList.insert(0, {
+                                  "path": path
+                              })
+        else
+            openedList.move(findIndex, 0, 1)
+    }
+
     Component.onCompleted: {
         if (historyList) {
             for (var i = 0; i < historyList.length; i++)

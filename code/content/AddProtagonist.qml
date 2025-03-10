@@ -467,7 +467,7 @@ Rectangle {
             addPerson.name = textName.text
             addPerson.gender = !switchGender.checked
             addPerson.call = textCall.text
-            addPerson.isTraditional = birthSwitch.checked
+            addPerson.birthTraditional = birthSwitch.checked
             // birth check??
             addPerson.birthday = textBirth.text
 

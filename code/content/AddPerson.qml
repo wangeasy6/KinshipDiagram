@@ -544,7 +544,13 @@ Rectangle {
         if (addType === "夫" || addType === "妻" || addType === "Ex") {
             singleGroup.exclusive = false
             for (var k = 0; k < startPerson.children.length; k++) {
-                autoConnectList.push({ id: startPerson.children[k], name: pdb.getPerson(startPerson.children[k]).name })
+                var getChild = pdb.getPerson(startPerson.children[k])
+                if (switchGender.checked)
+                    if (getChild.mother === -1)
+                        autoConnectList.push({ id: startPerson.children[k], name: getChild.name })
+                else
+                    if (getChild.father === -1)
+                        autoConnectList.push({ id: startPerson.children[k], name: getChild.name })
             }
         }
 
@@ -732,7 +738,7 @@ Rectangle {
             addPerson.avatarPath = textAvatarPath.text.replace(conf.dbPrefix, "")
         addPerson.name = textName.text
         addPerson.call = textCall.text
-        addPerson.isTraditional = birthSwitch.checked
+        addPerson.birthTraditional = birthSwitch.checked
         addPerson.birthday = textBirth.text
 
         if ((addType === "子" || addType === "女") && (!isAutoConnect.checked)) {
