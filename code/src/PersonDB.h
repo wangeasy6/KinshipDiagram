@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QQmlListProperty>
+#include "SettingsManager.h"
 
 
 class PersonInfo : public QObject
@@ -93,6 +94,7 @@ public:
     ~PersonDB();
     Q_INVOKABLE bool newMap(const QString path, const QString name);
     Q_INVOKABLE bool loadDB(QString person_db_path = "default.sqlite3");
+    // Q_PROPERTY(SettingsManager settings MEMBER m_settings NOTIFY settingsChanged)
     Q_PROPERTY(QString error_msg READ errorMsg CONSTANT)
     Q_INVOKABLE PersonInfo* newFirstPerson();
     Q_INVOKABLE PersonInfo* getPersonByName(QString name);
@@ -120,10 +122,12 @@ public:
     Q_INVOKABLE bool updateChildren(const int pid);
     Q_INVOKABLE bool updateChildren(const int pid, const QString childrenStr);
     QString errorMsg() {return m_errorMsg;};
+    Q_INVOKABLE SettingsManager* getSettings() {return &m_settings;};
 
 private:
     QSqlDatabase m_pDb;
     QString m_errorMsg;
+    SettingsManager m_settings;
     int m_protagonistId = -1;
     QList<PersonInfo*> m_personList;
     bool str2qlist(QList<int>*, QString str);
@@ -134,6 +138,8 @@ private:
     void clearDB();
     PersonInfo* getNextNewPerson();
 
+signals:
+    void settingsChanged();
 };
 
 #endif // PERSONDB_H

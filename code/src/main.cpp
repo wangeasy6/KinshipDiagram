@@ -11,6 +11,7 @@
 #include "PersonDB.h"
 #include "Config.h"
 #include "FileUtils.h"
+#include "SettingsManager.h"
 
 int main(int argc, char* argv[])
 {
@@ -22,6 +23,7 @@ int main(int argc, char* argv[])
     qmlRegisterType<PersonDB>("easy.qt.PersonDB", 0, 1, "PersonDB");
     qmlRegisterType<Config>("easy.qt.Config", 0, 1, "Config");
     qmlRegisterType<FileUtils>("easy.qt.FileUtils", 0, 1, "FileUtils");
+    qmlRegisterType<SettingsManager>("easy.qt.Settings", 0, 1, "SettingsManager");
 
     QQmlApplicationEngine engine;
     // engine.rootContext()->setContextProperty("ImageOps", new ImageOps);

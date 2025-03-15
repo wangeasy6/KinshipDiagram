@@ -23,6 +23,7 @@ qt6_add_qml_module(content
         NewProject.qml
         HelpInfo.qml
         YinYangSwitch.qml
+        Settings.qml
 
     RESOURCES
         fonts/fonts.txt
@@ -47,4 +48,5 @@ qt6_add_qml_module(content
         icons/person.png
         icons/inch-frame.png
         icons/inch-mask.png
+        icons/left-square.svg
     )

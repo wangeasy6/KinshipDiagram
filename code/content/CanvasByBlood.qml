@@ -26,38 +26,6 @@ Rectangle {
         drag.target: parent
         drag.axis: Drag.XAndYAxis
 
-        // onWheel: (wheel)=> {
-        //      console.log("onWheel:", wheel.angleDelta.y)
-        //      console.log(wheel.x, wheel.y, drawCanvas.x, drawCanvas.y)
-        //      scaleTransform.origin.x = Math.round(wheel.x)
-        //      scaleTransform.origin.y = Math.round(wheel.y)
-        //     var scaleValue = 1.1
-        //     if (wheel.angleDelta.y > 0) {
-        //         // 放大
-        //         if((scaleTransform.xScale*scaleValue) > 1)
-        //          {
-        //              scaleTransform.xScale = 1
-        //              scaleTransform.yScale = 1
-        //          }
-        //          else
-        //          {
-        //                      scaleTransform.xScale *= scaleValue
-        //                      scaleTransform.yScale *= scaleValue
-        //          }
-        //     } else {
-        //         // 缩小
-        //          if((scaleTransform.xScale/scaleValue) < minScale)
-        //          {
-        //              scaleTransform.xScale = minScale
-        //              scaleTransform.yScale = minScale
-        //          }
-        //          else
-        //          {
-        //             scaleTransform.xScale /= scaleValue
-        //             scaleTransform.yScale /= scaleValue
-        //         }
-        //     }
-        // }
         onWheel: wheel => {
                      // console.log("onWheel:", wheel.angleDelta.y)
                      // console.log(wheel.x, wheel.y, scaleTransform.xScale, drawCanvas.x, drawCanvas.y)

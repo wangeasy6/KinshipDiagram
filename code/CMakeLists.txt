@@ -15,7 +15,7 @@ endif()
 
 qt_add_executable(KinshipDiagramEditorApp src/main.cpp
     src/Config.cpp src/Config.h src/PersonDB.cpp src/PersonDB.h
-    src/FileUtils.h src/FileUtils.cpp
+    src/FileUtils.h src/FileUtils.cpp src/SettingsManager.h src/SettingsManager.cpp
 )
 
 qt_add_resources(KinshipDiagramEditorApp "configuration"

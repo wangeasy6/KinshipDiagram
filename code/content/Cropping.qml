@@ -45,6 +45,7 @@ Rectangle {
                 title: "Select a Photo"
                 currentFile: avatar.source
                 nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp *.webp)"]
+                modality: Qt.ApplicationModal
 
                 onAccepted: {
                     console.log("You selected:", selectAvatarFileDialog.file)

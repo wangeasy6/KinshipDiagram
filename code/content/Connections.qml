@@ -5,6 +5,7 @@ Shape {
     id: thisPage
     objectName: "CT"
     antialiasing: true
+    asynchronous: true
     property var node1: null
     property var node1Selected: node1 ? node1.selected : false
     // property var node1x: node1 ? node1.x : 0
@@ -14,7 +15,6 @@ Shape {
     // property var node2x: node2 ? node2.x : 0
     // property var node2y: node2 ? node2.y : 0
     property int type: 0
-    z: 0
 
     ShapePath {
         id: sp
@@ -40,8 +40,6 @@ Shape {
         //     GradientStop { position: 1.0; color: "black" }
         // }
 
-        // startX: node1?node1.x:0
-        // startY: node1?node1.y:0
         PathLine {
             id: line1
         }

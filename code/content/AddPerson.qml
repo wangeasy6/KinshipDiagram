@@ -521,7 +521,7 @@ Rectangle {
             switchGender.checked = false
         else {
             switchGender.checked = true
-            if (addType === "Ex")
+            if (addType.includes("前"))
                 switchGender.checked = startPerson.gender
         }
 
@@ -541,7 +541,7 @@ Rectangle {
                     autoConnectList.push({ id: startPerson.marriages[j], name: pdb.getPerson(startPerson.marriages[j]).name })
             }
         }
-        if (addType === "夫" || addType === "妻" || addType === "Ex") {
+        if (addType === "夫" || addType === "妻" || addType.includes("前")) {
             singleGroup.exclusive = false
             for (var k = 0; k < startPerson.children.length; k++) {
                 var getChild = pdb.getPerson(startPerson.children[k])
@@ -709,7 +709,7 @@ Rectangle {
                 }
             }
         }
-        if (addType === "Ex") {
+        if (addType.includes("前")) {
             addPerson = pdb.addEx(startPerson.id)
             if (!addPerson) {
                 console.log("Add Person failed.")

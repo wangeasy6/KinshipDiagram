@@ -66,7 +66,7 @@ Rectangle {
             if (selectPrefix.includes(conf.dbPrefix))
                 cropForm.rename = filePath.substring(lastSlashIndex + 1)
             else
-                cropForm.rename = textName.text + ".png"
+                cropForm.rename = textName.text + pdb.getSettings().photoFormat
             cropForm.visible = true
         }
 
@@ -243,7 +243,13 @@ Rectangle {
                     icon.width: 50
                     icon.source: "icons/settings.svg"
                     display: AbstractButton.IconOnly
-                    visible: false
+
+                    onClicked: {
+                        let newNode = Qt.createComponent("Settings.qml")
+                        if (newNode.status === Component.Ready) {
+                            let newP = newNode.createObject(mainRect)
+                        }
+                    }
                 }
 
                 ToolButton {
@@ -1135,7 +1141,7 @@ Rectangle {
 
     Rectangle {
         id: addToolRect
-        width: 380
+        width: 430
         height: 70
         color: "#d5d5d5"
         radius: 5
@@ -1179,7 +1185,7 @@ Rectangle {
                 id: addMate
                 width: 50
                 height: 50
-                text: selectedPerson ? selectedPerson.gender ? "夫" : "妻" : "夫"
+                text: selectedPerson ? (selectedPerson.gender ? "夫" : "妻") : "夫"
                 font.pointSize: 14
 
                 onClicked: {
@@ -1189,12 +1195,14 @@ Rectangle {
 
             ToolButton {
                 id: addEx
-                width: 50
+                width: 100
                 height: 50
-                text: "Ex"
-                font.pointSize: 14
+                text: selectedPerson ? (selectedPerson.gender ?
+                        ((pdb.getSettings().marriageMode === "modern") ? "前妻" : "前妻/妾") : "前夫") : "前夫"
+                font.pointSize: text.length == 2 ? 14 : 12
 
                 onClicked: {
+                    console.log("width:", contentItem.width)
                     addPerson(text)
                 }
             }
@@ -1405,6 +1413,7 @@ Rectangle {
                     selectedPerson = null
                     stack.visible = false
                     startRect.visible = true
+                    pdb.getSettings().initialized = false
                 }
             }
 
@@ -1609,7 +1618,6 @@ Rectangle {
     //     console.log(headerLayout.width, headerLayout.height)
     //     console.log(bodyLayout.width, bodyLayout.height)
     // }
-
     Component.onDestruction: {
         selectedPerson = null
         stack.clear(StackView.Immediate)

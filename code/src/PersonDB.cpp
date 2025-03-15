@@ -57,6 +57,7 @@ const PersonInfo& PersonInfo::operator=(const PersonInfo& _p)
 
 PersonDB::PersonDB()
 {
+    QQmlEngine::setObjectOwnership(&m_settings, QQmlEngine::CppOwnership);
     qDebug() << "PersonDB inited.\r\n";
 }
 
@@ -106,7 +107,6 @@ bool PersonDB::str2qlist(QList<int>* list, QString str)
     list->clear();
     QStringList items = str.split(",");
 
-    // 解析数组内元素
     for (const QString& item : items) {
         bool ok;
         int value = item.trimmed().toInt(&ok);
@@ -161,38 +161,45 @@ bool PersonDB::initDB(const QString filePath)
     qDebug() << "Database opened successfully:" << filePath;
 
     QSqlQuery query;
-    QString createTableSQL = "CREATE TABLE \"PersonList\" ("
-                             "\"id\"    INTEGER NOT NULL UNIQUE,"
-                             "\"protagonist\"   BLOB,"
-                             "\"name\"  TEXT,"
-                             "\"avatarPath\"    TEXT,"
-                             "\"gender\"    BLOB NOT NULL,"
-                             "\"call\"  TEXT,"
-                             "\"subCall\"   TEXT,"
-                             "\"birthday\"  TEXT,"
-                             "\"birthTraditional\"  BLOB,"
-                             "\"fRanking\"  INTEGER,"
-                             "\"mRanking\"  INTEGER,"
-                             "\"isDead\"    BLOB,"
-                             "\"deathTraditional\"  BLOB,"
-                             "\"death\" TEXT,"
-                             "\"notes\" TEXT,"
-                             "\"father\"    INTEGER,"
-                             "\"mother\"    INTEGER,"
-                             "\"children\"  TEXT,"
-                             "\"marriages\" TEXT,"
-                             "PRIMARY KEY(\"id\" AUTOINCREMENT)"
+    QString createTableSQL = "CREATE TABLE IF NOT EXISTS person_list ("
+                             "id    INTEGER NOT NULL UNIQUE,"
+                             "protagonist   BLOB,"
+                             "name  TEXT,"
+                             "avatar_path    TEXT,"
+                             "gender    BLOB NOT NULL,"
+                             "call  TEXT,"
+                             "sub_call   TEXT,"
+                             "birthday  TEXT,"
+                             "birth_trad  BLOB,"
+                             "f_rank  INTEGER,"
+                             "m_rank  INTEGER,"
+                             "is_dead    BLOB,"
+                             "death_trad  BLOB,"
+                             "death TEXT,"
+                             "notes TEXT,"
+                             "father    INTEGER,"
+                             "mother    INTEGER,"
+                             "children  TEXT,"
+                             "marriages TEXT,"
+                             "PRIMARY KEY(id AUTOINCREMENT)"
                              ");";
     qDebug().noquote() << createTableSQL;
 
     if (!query.exec(createTableSQL)) {
-        qDebug() << "Failed to create table:" << query.lastError().text();
+        qDebug() << "Failed to create table person_list:" << query.lastError().text();
         db.close();
         return false;
     }
-    qDebug() << "Table created successfully!";
+    qDebug() << "Table created person_list successfully!";
 
-    db.close();
+    // 初始化设置管理器
+    m_settings.setDatabase(db);
+    if (!m_settings.initSettingsTable()) {
+        qWarning() << "Failed to initialize settings table";
+        db.close();
+        return false;
+    }
+
     return true;
 }
 
@@ -229,10 +236,12 @@ bool PersonDB::loadDB(QString dbPath)
         qDebug() << "Error: Failed to connect database." << m_pDb.lastError().text();
         return false;
     }
+    m_settings.setDatabase(m_pDb);
+    m_settings.loadSettings();
 
     int pidCount = 0;
     QSqlQuery sqlQuery;
-    if (sqlQuery.exec("select * from PersonList")) {
+    if (sqlQuery.exec("select * from person_list")) {
         int index;
         while (sqlQuery.next()) {
             int pid = sqlQuery.value(0).toInt();
@@ -618,7 +627,7 @@ bool PersonDB::delPerson(int index)
 bool PersonDB::addPerson(PersonInfo* p)
 {
     QString marriages_str = qlist2str(&p->_marriages);
-    QString sqlStr = QString("INSERT INTO PersonList VALUES (" + QString::number(p->_id) +
+    QString sqlStr = QString("INSERT INTO person_list VALUES (" + QString::number(p->_id) +
                              ", " + QString::number(p->_protagonist) +
                              ", \"" + p->_name +
                              "\", \"" + p->_avatarPath +
@@ -679,19 +688,19 @@ int PersonDB::parentIsSync(int index)
 bool PersonDB::updatePerson(int index)
 {
     const PersonInfo* p = m_personList[index];
-    QString sqlStr = QString("UPDATE PersonList SET protagonist = " + QString::number(
+    QString sqlStr = QString("UPDATE person_list SET protagonist = " + QString::number(
                                  p->_protagonist) +
                              ",name = \"" + p->_name +
-                             "\",avatarPath = \"" + p->_avatarPath +
+                             "\",avatar_path = \"" + p->_avatarPath +
                              "\",gender = " + QString::number(p->_gender) +
                              ",call = \"" + p->_call +
-                             "\",subCall = \"" + p->_subCall +
+                             "\",sub_call = \"" + p->_subCall +
                              "\",birthday = \"" + p->_birthday +
-                             "\",birthTraditional = " + QString::number(p->_birthTraditional) +
-                             ",fRanking = " + QString::number(p->_fRanking) +
-                             ",mRanking = " + QString::number(p->_mRanking) +
-                             ",isDead = " + QString::number(p->_isDead) +
-                             ",deathTraditional = " + QString::number(p->_deathTraditional) +
+                             "\",birth_trad = " + QString::number(p->_birthTraditional) +
+                             ",f_rank = " + QString::number(p->_fRanking) +
+                             ",m_rank = " + QString::number(p->_mRanking) +
+                             ",is_dead = " + QString::number(p->_isDead) +
+                             ",death_trad = " + QString::number(p->_deathTraditional) +
                              ",death = \"" + p->_death +
                              "\",notes = \"" + p->_notes +
                              "\",father = " + QString::number(p->_father) +
@@ -715,8 +724,8 @@ bool PersonDB::updatePerson(int index)
 bool PersonDB::updateMRanking(const int pid, const int ranking)
 {
     m_personList[pid]->_mRanking = ranking;
-    QString sqlStr = QString("UPDATE PersonList SET "
-                             "mRanking = " + QString::number(ranking) +
+    QString sqlStr = QString("UPDATE person_list SET "
+                             "m_rank = " + QString::number(ranking) +
                              " WHERE id=" + QString::number(pid) +
                              ";");
 
@@ -734,8 +743,8 @@ bool PersonDB::updateMRanking(const int pid, const int ranking)
 bool PersonDB::updateFRanking(const int pid, const int ranking)
 {
     m_personList[pid]->_fRanking = ranking;
-    QString sqlStr = QString("UPDATE PersonList SET "
-                             "fRanking = " + QString::number(ranking) +
+    QString sqlStr = QString("UPDATE person_list SET "
+                             "f_rank = " + QString::number(ranking) +
                              " WHERE id=" + QString::number(pid) +
                              ";");
 
@@ -752,13 +761,18 @@ bool PersonDB::updateFRanking(const int pid, const int ranking)
 
 bool PersonDB::updateChildren(const int pid)
 {
-    QString sqlStr = QString("UPDATE PersonList SET "
+    QString sqlStr = QString("UPDATE person_list SET "
                              "children = \"" + qlist2str(&m_personList[pid]->_children) +
                              "\" WHERE id=" + QString::number(pid) +
                              ";");
 
     qDebug().noquote() << sqlStr;
     QSqlQuery sqlQuery;
+    /*
+    sqlQuery.prepare("UPDATE person_list SET children = :children WHERE id = :id");
+    sqlQuery.bindValue(":children", qlist2str(&m_personList[pid]->_children));
+    sqlQuery.bindValue(":id", pid);
+    */
     if (sqlQuery.exec(sqlStr)) {
         return true;
     }
@@ -771,7 +785,7 @@ bool PersonDB::updateChildren(const int pid)
 bool PersonDB::updateChildren(const int pid, const QString childrenStr)
 {
     str2qlist(&m_personList[pid]->_children, childrenStr);
-    QString sqlStr = QString("UPDATE PersonList SET "
+    QString sqlStr = QString("UPDATE person_list SET "
                              "children = \"" + childrenStr +
                              "\" WHERE id=" + QString::number(pid) +
                              ";");
@@ -789,7 +803,7 @@ bool PersonDB::updateChildren(const int pid, const QString childrenStr)
 
 bool PersonDB::delPersonDB(int id)
 {
-    QString sqlStr = QString("DELETE FROM PersonList WHERE id = \"" + QString::number(id) + "\";");
+    QString sqlStr = QString("DELETE FROM person_list WHERE id = \"" + QString::number(id) + "\";");
 
     qDebug().noquote() << sqlStr;
     QSqlQuery sqlQuery;
