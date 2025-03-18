@@ -13,6 +13,11 @@ public:
     Q_INVOKABLE bool deleteFile(QString _path);
     Q_INVOKABLE bool copyFile(QString _from, QString _to);
     Q_INVOKABLE bool copyFileOverlay(QString _from, QString _to);
+    Q_INVOKABLE void loadFile(const QString& filePath);
+
+signals:
+    void fileLoaded(const QString& content);
+    void errorOccurred(const QString& errorMessage);
 };
 
 #endif // FILEUTILS_H

@@ -102,3 +102,18 @@ bool FileUtils::copyFileOverlay(QString _from, QString _to)
 
     return result;
 }
+
+void FileUtils::loadFile(const QString& filePath)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        emit errorOccurred("Unable open: " + filePath);
+        return;
+    }
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+
+    emit fileLoaded(content);
+}

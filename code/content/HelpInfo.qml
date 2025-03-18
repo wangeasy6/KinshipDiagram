@@ -4,8 +4,8 @@ import QtQuick.Layouts
 
 Popup {
     id: thisPage
-    width: 320
-    height: 240
+    width: 700
+    height: 750
     anchors.centerIn: parent
     modal: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -20,7 +20,7 @@ Popup {
             anchors.margins: 10
 
             Label {
-                text: "Help Info"
+                text: "软件信息"
                 horizontalAlignment: Text.AlignHCenter
                 font.pointSize: 16
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -28,22 +28,62 @@ Popup {
             }
 
             TextArea {
-                text: "* Author: Easy Wang\r\n* Version: 0.15.0\r\n* Based: QtQuick 6.2"
+                text: "* Author: **Easy Wang**\r\n* Version: **0.15.1**\r\n* Based: **QtQuick 6.2**"
                 wrapMode: Text.Wrap
                 Layout.fillHeight: false
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 textFormat: Text.MarkdownText
                 readOnly: true
             }
 
+            Label {
+                text: "用户指南"
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: 16
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.fillWidth: true
+            }
+
+            ScrollView {
+                Layout.preferredHeight: 400
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+
+                ScrollBar.vertical: ScrollBar {
+                    x: parent.width - width
+                    y: 10
+                    height: parent.height - 10
+                }
+
+                TextArea {
+                    id: userManual
+                    wrapMode: Text.Wrap
+                    textFormat: Text.RichText
+                    readOnly: true
+                    implicitWidth: parent.width  // 自动适应滚动视图宽度
+                }
+            }
+
             Button {
                 text: "Ok"
-                Layout.alignment: Qt.AlignRight | Qt.AlignBottom
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 onClicked: {
                     thisPage.destroy()
                 }
             }
         }
     }
+
+    Component.onCompleted: {
+       fileUtils.fileLoaded.connect(function(content) {
+           userManual.text = content;
+       });
+
+       fileUtils.errorOccurred.connect(function(message) {
+           console.error(message);
+       });
+
+        fileUtils.loadFile("docs/UserManual.html");
+   }
 }
