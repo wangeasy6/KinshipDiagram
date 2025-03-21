@@ -12,6 +12,7 @@ Rectangle {
     anchors.centerIn: parent
     radius: 10
     signal finished(bool updateFlag)
+    property var tempImages: new Set()
 
     layer.enabled: true
     layer.effect: DropShadow {
@@ -44,7 +45,7 @@ Rectangle {
                 cropForm.rename = filePath.substring(lastSlashIndex + 1)
             else {
                 if (textName.text)
-                    cropForm.rename = textName.text + ".jpg"
+                    cropForm.rename = textName.text + pdb.getSettings().photoFormat
                 else
                     cropForm.rename = filePath.substring(lastSlashIndex + 1)
             }
@@ -70,6 +71,7 @@ Rectangle {
                     selectSuffix = filePath.substring(lastSlashIndex)
                     var saveTo = conf.dbPrefix + textName.text + selectSuffix
                     console.log("Save to: ", saveTo)
+                    tempImages.add(saveTo)
                     if (fileUtils.copyFileOverlay(filePath, saveTo))
                         avatar.source = saveTo
                 }
@@ -84,11 +86,12 @@ Rectangle {
         pathPrefix: conf.dbPrefix
         z: 2
 
-        onSaved: path => {
-                     console.log("Get path:", path)
-                     avatar.source = path
-                     avatar.update()
-                 }
+        onSaved: (path) => {
+            console.log("Get path:", path)
+            tempImages.add(path)
+            avatar.source = path
+            avatar.update()
+        }
     }
 
     ColumnLayout {
@@ -141,13 +144,13 @@ Rectangle {
 
                 Image {
                     id: avatar
-                    Layout.preferredWidth: 250
                     Layout.preferredHeight: 350
+                    Layout.preferredWidth: 250
                     source: "icons/person.svg"
                     Layout.margins: 10
-                    sourceSize.height: 350
-                    sourceSize.width: 250
                     Layout.alignment: Qt.AlignHCenter
+                    fillMode: Image.PreserveAspectFit
+                    cache: false
                 }
 
                 Row {
@@ -177,9 +180,7 @@ Rectangle {
                         nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp)"]
 
                         onAccepted: {
-                            console.log("You selected:",
-                                        selectAvatarFileDialog.file)
-                            // avatar.source = selectAvatarFileDialog.file
+                            console.log("You selected:", selectAvatarFileDialog.file)
                             isCropMD.visible = true
                         }
                     }
@@ -414,12 +415,14 @@ Rectangle {
                         topPadding: 12
                         rightPadding: 40
                         leftPadding: 40
-                        // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         font.pointSize: 16
 
                         onClicked: {
-                            if (avatar.source.toString().startsWith("file:"))
-                                fileUtils.deleteFile(avatar.source.toString())
+                            tempImages.forEach(function(path) {
+                                fileUtils.deleteFile(path)
+                            })
+                            tempImages.clear()
+
                             thisPage.finished(false)
                             thisPage.destroy()
                         }
@@ -434,10 +437,16 @@ Rectangle {
                         topPadding: 12
                         rightPadding: 40
                         leftPadding: 40
-                        // Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         font.pointSize: 16
 
                         onClicked: {
+                            var currentPath = avatar.source.toString()
+                            tempImages.forEach(function(path) {
+                                if (path !== currentPath) {
+                                    fileUtils.deleteFile(path)
+                                }
+                            })
+                            tempImages.clear()
                             saveData()
                         }
                     }
@@ -452,7 +461,7 @@ Rectangle {
     }
 
     function saveData() {
-        console.log("saveData")
+        console.log("[AddProtagonist] Save data.")
 
         if (!isPositiveInteger(textSSAR.text))
             return

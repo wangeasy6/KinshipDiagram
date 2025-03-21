@@ -28,7 +28,7 @@ Popup {
             }
 
             TextArea {
-                text: "* Author: **Easy Wang**\r\n* Version: **0.15.1**\r\n* Based: **QtQuick 6.2**"
+                text: "* Author: **Easy Wang**\r\n* Version: **0.15.2**\r\n* Based: **QtQuick 6.2**"
                 wrapMode: Text.Wrap
                 Layout.fillHeight: false
                 Layout.alignment: Qt.AlignHCenter
@@ -76,14 +76,6 @@ Popup {
     }
 
     Component.onCompleted: {
-       fileUtils.fileLoaded.connect(function(content) {
-           userManual.text = content;
-       });
-
-       fileUtils.errorOccurred.connect(function(message) {
-           console.error(message);
-       });
-
-        fileUtils.loadFile("docs/UserManual.html");
+        fileUtils.loadFile("docs/UserManual.html", userManual)
    }
 }

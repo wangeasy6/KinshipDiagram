@@ -104,9 +104,10 @@ Rectangle {
 
         onAccepted: {
             var toBeDeletedP = selectedPerson
+            var toBeDeletedId = selectedPerson.pi.id
+            var toBeDeletedAvatar = selectedPerson.avatarPath
             selectedPerson = null
 
-            var toBeDeletedId = toBeDeletedP.pi.id
             toBeDeletedP.parent = null
             toBeDeletedP.destroy()
             for (var i = 0; i < allPerson.length; i++) {
@@ -115,7 +116,12 @@ Rectangle {
                     break
                 }
             }
+
+            // Delete avatar
+            if (!toBeDeletedAvatar.startsWith("icons/"))
+                fileUtils.deleteFile(toBeDeletedAvatar)
             pdb.delPerson(toBeDeletedId)
+            stack.currentItem.redraw()
 
             if (pdb.personListCount() === 0) {
                 // Create protagonist
@@ -693,20 +699,17 @@ Rectangle {
 
                     Image {
                         id: avatar
-                        width: 250
-                        height: 350
+                        Layout.preferredHeight: 350
+                        Layout.preferredWidth: 250
                         source: "icons/person.svg"
                         Layout.margins: 10
-                        sourceSize.height: 350
-                        sourceSize.width: 250
                         Layout.alignment: Qt.AlignHCenter
-                        fillMode: Image.Stretch
+                        fillMode: Image.PreserveAspectFit
                         cache: false
                     }
 
                     Row {
                         Layout.fillWidth: true
-                        height: 30
                         Layout.rightMargin: 10
                         Layout.leftMargin: 10
                         spacing: 20
@@ -722,7 +725,8 @@ Rectangle {
                             Keys.onReturnPressed: {
                                 if (textName.text) {
                                     cropForm.avatarPath = text
-                                    cropForm.rename = textName.text + ".png"
+                                    cropForm.rename = textName.text + 
+                                                          pdb.getSettings().photoFormat
                                     cropForm.visible = true
                                 } else {
                                     errorMD.text = "请先填写人员姓名！"
@@ -1148,7 +1152,7 @@ Rectangle {
         border.width: 0
         x: subToolRect.x + 25
         y: subToolRect.y - 90
-        visible: false //btAdd.focus
+        visible: false
 
         Row {
             id: addToolBar
@@ -1369,7 +1373,6 @@ Rectangle {
                         deleteConfirmDialog.text = "确定删除：" + selectedPerson.name + "？"
                         deleteConfirmDialog.open()
                     } else {
-                        console.log(pdb.errorMsg)
                         errorMD.text = pdb.errorMsg
                         errorMD.visible = true
                     }

@@ -18,6 +18,7 @@ Rectangle {
     property var startPerson
     property var addType
     property var autoConnectList: []
+    property var tempImages: new Set()
 
     layer.enabled: true
     layer.effect: DropShadow {
@@ -49,7 +50,7 @@ Rectangle {
                 cropForm.rename = filePath.substring(lastSlashIndex + 1)
             else {
                 if (textName.text)
-                    cropForm.rename = textName.text + ".jpg"
+                    cropForm.rename = textName.text + pdb.getSettings().photoFormat
                 else
                     cropForm.rename = filePath.substring(lastSlashIndex + 1)
             }
@@ -75,6 +76,7 @@ Rectangle {
                     selectSuffix = filePath.substring(lastSlashIndex)
                     var saveTo = conf.dbPrefix + textName.text + selectSuffix
                     console.log("Save to: ", saveTo)
+                    tempImages.add(saveTo)
                     if (fileUtils.copyFileOverlay(filePath, saveTo))
                         avatar.source = saveTo
                 }
@@ -91,6 +93,7 @@ Rectangle {
 
         onSaved: (path) => {
             console.log("Get path:", path)
+            tempImages.add(path)
             avatar.source = path
             avatar.update()
         }
@@ -144,13 +147,13 @@ Rectangle {
 
                 Image {
                     id: avatar
-                    Layout.preferredWidth: 250
                     Layout.preferredHeight: 350
+                    Layout.preferredWidth: 250
                     source: "icons/person.svg"
                     Layout.margins: 10
-                    sourceSize.height: 350
-                    sourceSize.width: 250
                     Layout.alignment: Qt.AlignHCenter
+                    fillMode: Image.PreserveAspectFit
+                    cache: false
                 }
 
                 Row {
@@ -484,8 +487,11 @@ Rectangle {
                         font.pointSize: 16
 
                         onClicked: {
-                            if (avatar.source.toString().startsWith("file:"))
-                                fileUtils.deleteFile(avatar.source.toString())
+                            tempImages.forEach(function(path) {
+                                fileUtils.deleteFile(path)
+                            })
+                            tempImages.clear()
+
                             thisPage.finished(false)
                             thisPage.destroy()
                         }
@@ -503,6 +509,13 @@ Rectangle {
                         font.pointSize: 16
 
                         onClicked: {
+                            var currentPath = avatar.source.toString()
+                            tempImages.forEach(function(path) {
+                                if (path !== currentPath) {
+                                    fileUtils.deleteFile(path)
+                                }
+                            })
+                            tempImages.clear()
                             saveData()
                             thisPage.finished(true)
                             thisPage.destroy()
@@ -570,7 +583,7 @@ Rectangle {
     }
 
     function saveData() {
-        console.log("saveData")
+        console.log("[AddPerson] Save data.")
 
         if (!isPositiveInteger(textSSAR.text))
             return

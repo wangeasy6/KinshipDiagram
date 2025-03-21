@@ -252,20 +252,12 @@ Rectangle {
     }
 
     function clearUI() {
-        var i = 0
+        var i
         var child
-        // for (i = drawCanvas.children.length - 1; i >= 0; i--) {
-        //     child = drawCanvas.children[i];
-        //     if(child.objectName === "CT")
-        //     {
-        //         child.parent = null
-        //         child.destroy()
-        //     }
-        // }
         for (i = drawCanvas.children.length - 1; i >= 0; i--) {
             child = drawCanvas.children[i]
             if (child.objectName === "PF") {
-                console.log("Clear UI:", child.name)
+                console.log("Clear PF:", child.name)
                 child.parent = null
                 child.destroy()
             }

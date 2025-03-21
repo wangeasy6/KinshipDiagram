@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QMetaObject>
+#include <QMetaProperty>
 
 
 FileUtils::FileUtils(QObject* parent)
@@ -103,17 +105,39 @@ bool FileUtils::copyFileOverlay(QString _from, QString _to)
     return result;
 }
 
-void FileUtils::loadFile(const QString& filePath)
+// void FileUtils::loadFile(const QString& filePath)
+// {
+//     QFile file(filePath);
+//     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+//         emit errorOccurred("Missing file: " + filePath);
+//         return;
+//     }
+
+//     QTextStream in(&file);
+//     QString content = in.readAll();
+//     file.close();
+
+//     emit fileLoaded(content);
+// }
+
+bool FileUtils::loadFile(const QString& filePath, QObject* textObject)
 {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        emit errorOccurred("Unable open: " + filePath);
-        return;
+        QString errorMsg = "Missing file: " + filePath;
+        if (textObject) {
+            textObject->setProperty("text", errorMsg);
+        }
+        return false;
     }
 
     QTextStream in(&file);
     QString content = in.readAll();
     file.close();
 
-    emit fileLoaded(content);
+    if (textObject) {
+        textObject->setProperty("text", content);
+    }
+
+    return true;
 }
