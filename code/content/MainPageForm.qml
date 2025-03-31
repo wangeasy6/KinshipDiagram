@@ -321,6 +321,18 @@ Rectangle {
                             height: 55
                             font.pointSize: 13
 
+                            onCursorVisibleChanged: {
+                                console.log("searchInput get CursorVisible: ", cursorVisible)
+                                resultListView.visible = cursorVisible
+                                if(cursorVisible && text === "")
+                                {
+                                    resultModel.clear()
+                                    for (var i = 0; i < allPerson.length; i++) {
+                                        resultModel.append(allPerson[i])
+                                    }
+                                }
+                            }
+
                             onTextChanged: {
                                 resultModel.clear()
                                 if (text) {
@@ -1239,7 +1251,8 @@ Rectangle {
 
     Rectangle {
         id: subToolRect
-        width: 490
+        width: 550  // 20 + button.number * 50  + (button.number - 1) * 10
+                    // = 10 + button.number * 60
         height: 70
         color: "#d5d5d5"
         radius: 5
@@ -1259,8 +1272,8 @@ Rectangle {
                 enabled: stack.visible
                 width: 50
                 height: 50
-                icon.height: 50
-                icon.width: 50
+                icon.height: 34
+                icon.width: 34
                 icon.source: "icons/home-8-line.svg"
                 display: AbstractButton.IconOnly
                 ToolTip.text: "回到初始页"
@@ -1282,8 +1295,8 @@ Rectangle {
                 enabled: stack.currentItem
                 width: 50
                 height: 50
-                icon.height: 40
-                icon.width: 40
+                icon.height: 34
+                icon.width: 34
                 icon.source: "icons/refresh.svg"
                 display: AbstractButton.IconOnly
                 ToolTip.text: "刷新当前页"
@@ -1380,12 +1393,38 @@ Rectangle {
             }
 
             ToolButton {
+                id: btLineEdit
+                enabled: selectedPerson
+                width: 50
+                height: 50
+                display: AbstractButton.IconOnly
+                icon.source: "icons/line-edit.svg"
+                icon.height: 34
+                icon.width: 34
+                ToolTip.text: "编辑关系"
+                ToolTip.delay: 500
+                ToolTip.visible: hovered
+
+                onClicked: {
+                    let newNode = Qt.createComponent("LineEdit.qml")
+                    if (newNode.status === Component.Ready) {
+                        let newP = newNode.createObject(mainRect, {
+                                                            "startPerson": selectedPerson.pi
+                                                        })
+                        newP.finished.connect(updatePage)
+                    } else if (newNode.status === Component.Error) {
+                        console.error("Create LineEdit component error:", newNode.errorString())
+                    }
+                }
+            }
+
+            ToolButton {
                 id: btStar
                 enabled: selectedPerson
                 width: 50
                 height: 50
-                icon.height: 50
-                icon.width: 50
+                icon.height: 34
+                icon.width: 34
                 icon.source: "icons/star.svg"
                 display: AbstractButton.IconOnly
                 ToolTip.text: "设置为关键人员"

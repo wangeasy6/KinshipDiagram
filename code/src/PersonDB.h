@@ -36,6 +36,7 @@ public:
     PersonInfo();
     PersonInfo(const PersonInfo&);
     const PersonInfo& operator=(const PersonInfo&);
+    bool delConnection(int del_pid);
 
     int _id;
     bool _protagonist;
@@ -113,7 +114,10 @@ public:
     Q_INVOKABLE PersonInfo* addDaughter(const int index);
     Q_INVOKABLE bool delPersonCheck(const PersonInfo* p);
     Q_INVOKABLE bool delPerson(int index);
-    Q_INVOKABLE bool updatePerson(int index);
+    Q_INVOKABLE bool addConnection(PersonInfo* p, int to_pid, int type);
+    Q_INVOKABLE bool delConnection(int, int);
+    Q_INVOKABLE bool updatePerson(int pid);
+    Q_INVOKABLE bool updatePerson(const PersonInfo* p);
     bool addPerson(PersonInfo* p);
     // Judge whether the children of their parents are the same.
     Q_INVOKABLE int parentIsSync(int index);
@@ -121,6 +125,8 @@ public:
     Q_INVOKABLE bool updateFRanking(const int pid, const int ranking);
     Q_INVOKABLE bool updateChildren(const int pid);
     Q_INVOKABLE bool updateChildren(const int pid, const QString childrenStr);
+    Q_INVOKABLE bool adjustMarriageRanking(PersonInfo* p, int pid, int shift);
+    Q_INVOKABLE bool adjustChildrenRanking(PersonInfo* p, int pid, int shift);
     QString errorMsg() {return m_errorMsg;};
     Q_INVOKABLE SettingsManager* getSettings() {return &m_settings;};
 

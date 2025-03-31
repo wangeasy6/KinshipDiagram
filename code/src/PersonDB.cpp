@@ -49,6 +49,80 @@ PersonInfo::PersonInfo(const PersonInfo& _p)
     _marriages = _p._marriages;
 }
 
+bool PersonInfo::delConnection(int del_pid)
+{
+    if (_father == del_pid) {
+        _father = -1;
+        return true;
+    }
+    if (_mother == del_pid) {
+        _mother = -1;
+        return true;
+    }
+
+    for (int i = 0; i < _marriages.length(); i++) {
+        if (_marriages[i] == del_pid) {
+            if (i == 0) {
+                _marriages[i] = -1;
+                return true;
+            } else {
+                _marriages.remove(i, 1);
+                return true;
+            }
+        }
+    }
+
+    for (int i = 0; i < _children.length(); i++) {
+        if (_marriages[i] == del_pid) {
+            _marriages.remove(i, 1);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool PersonDB::addConnection(PersonInfo* p, int to_pid, int type)
+{
+    PersonInfo* to_p = m_personList[to_pid];
+    switch (type) {
+    case 0:
+        p->_father = to_pid;
+        to_p->_children.append(p->_id);
+        break;
+    case 1:
+        p->_mother = to_pid;
+        to_p->_children.append(p->_id);
+        break;
+    case 2:
+        p->_marriages[0] = to_pid;
+        to_p->_marriages[0] = p->_id;
+        break;
+    case 3:
+        p->_marriages.append(to_pid);
+        to_p->_marriages.append(p->_id);
+        break;
+    case 4:
+        p->_children.append(to_pid);
+        if(p->_gender)
+            to_p->_father = p->_id;
+        else
+            to_p->_mother = p->_id;
+        break;
+    default:
+        return false;
+    }
+    updatePerson(p);
+    updatePerson(to_p);
+    return true;
+}
+
+bool PersonDB::delConnection(int pid1, int pid2)
+{
+    PersonInfo* p1 = m_personList[pid1];
+    PersonInfo* p2 = m_personList[pid2];
+    return p1->delConnection(pid2) && p2->delConnection(pid1);
+}
 
 const PersonInfo& PersonInfo::operator=(const PersonInfo& _p)
 {
@@ -685,9 +759,8 @@ int PersonDB::parentIsSync(int index)
     return 0;
 }
 
-bool PersonDB::updatePerson(int index)
+bool PersonDB::updatePerson(const PersonInfo* p)
 {
-    const PersonInfo* p = m_personList[index];
     QString sqlStr = QString("UPDATE person_list SET protagonist = " + QString::number(
                                  p->_protagonist) +
                              ",name = \"" + p->_name +
@@ -718,6 +791,12 @@ bool PersonDB::updatePerson(int index)
 
     qDebug() << "Failed update Person." << sqlQuery.lastError().text();
     return false;
+}
+
+bool PersonDB::updatePerson(int pid)
+{
+    const PersonInfo* p = m_personList[pid];
+    return updatePerson(p);
 }
 
 
@@ -798,6 +877,38 @@ bool PersonDB::updateChildren(const int pid, const QString childrenStr)
 
     qDebug() << "Failed update Person: " << sqlQuery.lastError().text();
     return false;
+}
+
+
+bool PersonDB::adjustMarriageRanking(PersonInfo* p, int pid, int shift)
+{
+    if (!p || !p->_marriages.contains(pid))
+        return false;
+
+    int currentIndex = p->_marriages.indexOf(pid);
+    int newIndex = currentIndex - shift;
+    if (newIndex < 1 || p->_marriages.count() <= newIndex)
+        return false;
+
+    p->_marriages.move(currentIndex, newIndex);
+
+    return updatePerson(p);
+}
+
+
+bool PersonDB::adjustChildrenRanking(PersonInfo* p, int pid, int shift)
+{
+    if (!p || !p->_children.contains(pid))
+        return false;
+
+    int currentIndex = p->_children.indexOf(pid);
+    int newIndex = currentIndex - shift;
+    if (newIndex < 0 || p->_children.count() <= newIndex)
+        return false;
+
+    p->_children.move(currentIndex, newIndex);
+
+    return updateChildren(p->_id);
 }
 
 

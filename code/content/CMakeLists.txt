@@ -24,6 +24,7 @@ qt6_add_qml_module(content
         HelpInfo.qml
         YinYangSwitch.qml
         Settings.qml
+        LineEdit.qml
 
     RESOURCES
         fonts/fonts.txt
@@ -49,4 +50,5 @@ qt6_add_qml_module(content
         icons/inch-frame.png
         icons/inch-mask.png
         icons/left-square.svg
+        icons/line-edit.svg
     )

@@ -155,7 +155,7 @@ function calculatePosition(load) {
     let type = load.type
     let index = load.index
 
-    var mateShiftX = 130
+    var mateShiftX = 140
 
     if (type === connectType.FATHER) {
         load["posX"] = p1.x - 150
@@ -312,6 +312,7 @@ function addCentralRole(pi, pdb) {
     node = {
         "start": drawCanvas,
         "target": pi.id,
+        "type": -1,
         "posX": gCenterPos.x,
         "posY": gCenterPos.y,
         "anchor": 0,

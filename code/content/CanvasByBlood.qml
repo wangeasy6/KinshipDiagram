@@ -91,8 +91,8 @@ Rectangle {
                                                   "x": load.posX,
                                                   "y": load.posY,
                                                   "z": load.posZ,
-                                                  "pi"// pi: pdb.getPerson(load.target)
-                                                  : load.pi
+                                                  "pi": load.pi,
+                                                  "type": load.type
                                               })
                 newP.onClicked.connect(setSidePerson)
                 newP.onDoubleClicked.connect(addPage)
