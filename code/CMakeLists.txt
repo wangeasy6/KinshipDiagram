@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.21.1)
 option(LINK_INSIGHT "Link Qt Insight Tracker library" ON)
 option(BUILD_QDS_COMPONENTS "Build design studio components" ON)
 
-project(KinshipDiagramEditorApp LANGUAGES CXX)
+project(KinshipDiagramApp LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 
@@ -13,19 +13,19 @@ if (Qt6_VERSION VERSION_GREATER_EQUAL 6.3)
     qt_standard_project_setup()
 endif()
 
-qt_add_executable(KinshipDiagramEditorApp src/main.cpp
+qt_add_executable(KinshipDiagramApp src/main.cpp
     src/Config.cpp src/Config.h src/PersonDB.cpp src/PersonDB.h
     src/FileUtils.h src/FileUtils.cpp src/SettingsManager.h src/SettingsManager.cpp
 )
 
-qt_add_resources(KinshipDiagramEditorApp "configuration"
+qt_add_resources(KinshipDiagramApp "configuration"
     PREFIX "/"
     FILES
         qtquickcontrols2.conf
         Logo.png
 )
 
-target_link_libraries(KinshipDiagramEditorApp PRIVATE
+target_link_libraries(KinshipDiagramApp PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
@@ -46,7 +46,7 @@ if (LINK_INSIGHT)
 endif ()
 
 include(GNUInstallDirs)
-install(TARGETS KinshipDiagramEditorApp
+install(TARGETS KinshipDiagramApp
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

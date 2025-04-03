@@ -5,11 +5,19 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#include <QStandardPaths>
 
 Config::Config()
 {
 
     QFile configFd;
+
+#ifndef QT_DEBUG
+    QString appLocalDataPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    if (!appLocalDataPath.isEmpty())
+        m_configPath = appLocalDataPath + "/def_cfg.json";
+#endif
+
     configFd.setFileName(m_configPath);
     if (!configFd.open(QIODevice::ReadWrite | QIODevice::Text)) {
         qDebug() << "Unable to open: " << m_configPath;
@@ -42,8 +50,6 @@ bool Config::updatePath(const QString path)
     QFileInfo fileInfo(path);
     m_dbPath = "file:///" + path;
     m_dbPrefix = "file:///" + fileInfo.dir().path() + "/";
-    qDebug() << "Current mpa path: " << m_dbPath;
-    qDebug() << "Current mpa prefix: " << m_dbPrefix;
 
     // Update list
     int index = m_historyList.indexOf(path);

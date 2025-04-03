@@ -28,7 +28,7 @@ Popup {
             }
 
             TextArea {
-                text: "* Author: **Easy Wang**\r\n* Version: **0.16.0**\r\n* Based: **QtQuick 6.2**"
+                text: "* Author: **Easy Wang**\r\n* Version: **0.16.1**\r\n* Based: **QtQuick 6.2**"
                 wrapMode: Text.Wrap
                 Layout.fillHeight: false
                 Layout.alignment: Qt.AlignHCenter

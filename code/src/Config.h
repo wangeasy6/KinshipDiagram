@@ -24,7 +24,7 @@ signals:
     void sigHistoryListChanged();
 
 private:
-    const QString m_configPath = "def_cfg.json";
+    QString m_configPath = "def_cfg.json";
     QList<QString> m_historyList;
     QString m_dbPath;
     QString m_dbPrefix;
