@@ -3,22 +3,28 @@ import QtQuick.Controls 6.2
 import QtQuick.Layouts
 import Qt.labs.platform
 
-Rectangle {
+Popup {
     id: thisPage
+    modal: true
+    visible : true
     width: 500
     height: 600
-    color: "#E5E5E5"
+    padding: 0
     anchors.centerIn: parent
-    radius: 10
+    closePolicy: Popup.CloseOnEscape
     z: 2
 
     property var startPerson
     property var allPerson: []
-    // property var typeFilteredPerson: []
     property bool isModernType: pdb.getSettings().marriageMode === "modern"
     property list<int> originalLine
     property bool isChanged: false
     signal finished(bool result)
+
+    background: Rectangle {
+        color: "#E5E5E5"
+        radius: 10
+    }
 
     MessageDialog {
         id: delConfirmMD

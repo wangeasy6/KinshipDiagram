@@ -53,4 +53,7 @@ qt6_add_qml_module(content
         icons/line-edit.svg
         icons/clockwise.svg
         icons/anticlockwise.svg
+        icons/heart-red.svg
+        icons/heart-pink.svg
+        icons/heart-break.svg
     )

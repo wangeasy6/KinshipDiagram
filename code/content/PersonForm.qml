@@ -4,36 +4,50 @@ import Qt5Compat.GraphicalEffects
 import easy.qt.Person 0.1
 
 Rectangle {
+    id: content
+    objectName: "PF"
     width: 200
     height: 240
-    property PersonInfo pi
-    property bool gender: pi ? pi.gender : true
-    property int type: 0
-    property string name: pi ? pi.name : ""
-    property string avatarPath: ""
-    // property string avatarPath: pi?pi.avatarPath:""
-    property bool isMain: pi ? pi.protagonist : false
-    property bool selected: false
-    // property int generation: 0
-    // property int anchor: 0  // 0 = Left; 1 = Right
-    // property PersonForm neighborL
-    // property PersonForm neighborR
-    // property PersonForm father
-    // property PersonForm mother
-    // property var childrens:[]
-    // property var marriages:[]
-    // property int x1: 0
-    // property int x2: 0
     color: gender ? "#63B8FF" : "#FFC0CB" // male : female
     radius: 10
     border.width: 3
     border.color: selected ? gender ? "#FFC0CB" : "#63B8FF" : color
     smooth: true
     z: 1
+
+    property alias imgAvatar: avatar
+    property PersonInfo pi
+    property bool gender: pi ? pi.gender : true
+    property int type: -1
+    property string name: pi ? pi.name : ""
+    property string avatarPath: ""
+    property bool isMain: pi ? pi.protagonist : false
+    property bool selected: false
+
     signal clicked(PersonForm p)
     signal doubleClicked(PersonInfo pi)
-    objectName: "PF"
-    property alias imgAvatar: avatar
+
+    layer.enabled: true
+    layer.effect: DropShadow {
+        transparentBorder: true
+        horizontalOffset: 3
+        verticalOffset: 4
+        color: "#C0CCCCCC"
+    }
+
+    Image {
+        id: maritalStatus
+        width: 30
+        height: 30
+        smooth: true
+        fillMode: Image.PreserveAspectFit
+        visible: type>2
+        anchors.right: parent.left
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: -195
+        anchors.bottomMargin: 15
+        z: 2
+    }
 
     Image {
         id: star
@@ -108,6 +122,22 @@ Rectangle {
             font.pointSize: 10
             font.bold: true
             color: "white"
+        }
+    }
+
+    onTypeChanged: {
+        if (type > 2)
+        {
+            console.log(name, " type - ", type)
+            if (type === 3) {
+                maritalStatus.source = "icons/heart-red.svg"
+            }
+            else{
+                if(pdb.getSettings().marriageMode === "ancient")
+                    maritalStatus.source = "icons/heart-pink.svg"
+                else
+                    maritalStatus.source = "icons/heart-break.svg"
+            }
         }
     }
 

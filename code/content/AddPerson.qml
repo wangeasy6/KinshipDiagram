@@ -2,31 +2,29 @@ import QtQuick 6.2
 import QtQuick.Controls 6.2
 import QtQuick.Layouts
 import Qt.labs.platform
-import Qt5Compat.GraphicalEffects
 import easy.qt.FileUtils 0.1
 
-Rectangle {
+Popup {
     id: thisPage
+    modal: true
+    visible : true
     width: 1000
     height: 750
-    color: "#E5E5E5"
+    padding: 0
     anchors.centerIn: parent
-    radius: 10
-    signal beforeSave()
-    signal finished(bool updateFlag)
+    closePolicy: Popup.NoAutoClose
+
     property var startPersonId
     property var startPerson
     property var addType
     property var autoConnectList: []
     property var tempImages: new Set()
+    signal beforeSave()
+    signal finished(bool updateFlag)
 
-    layer.enabled: true
-    layer.effect: DropShadow {
-        transparentBorder: true
-        horizontalOffset: 15
-        verticalOffset: 20
-        color: "#C0CCCCCC"
-        spread: 0
+    background: Rectangle {
+        color: "#E5E5E5"
+        radius: 10
     }
 
     MouseArea {

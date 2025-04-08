@@ -40,6 +40,12 @@ Rectangle {
         // If not found def_con.json
     }
 
+    Item {
+        id: settings
+        property var settingsManager: pdb.getSettings()
+        property bool isAncient: settingsManager.marriageMode === "ancient"
+    }
+
     FileUtils {
         id: fileUtils
     }

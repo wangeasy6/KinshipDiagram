@@ -2,32 +2,29 @@ import QtQuick 6.2
 import QtQuick.Controls 6.2
 import QtQuick.Layouts
 import Qt.labs.platform
-import Qt5Compat.GraphicalEffects
 
-Rectangle {
+Popup {
     id: thisPage
+    modal: true
+    visible : true
     width: 1000
     height: 400
-    color: "#E5E5E5"
+    padding: 0
     anchors.centerIn: parent
-    radius: 10
-    signal finished(bool updateFlag)
+    closePolicy: Popup.NoAutoClose
+
     property var startPersonId
     property var startPerson
     property var fatherP
     property var motherP
-
     property int isSync
     property Item onPressedItem: null
     property bool isChanged: false
+    signal finished(bool updateFlag)
 
-    layer.enabled: true
-    layer.effect: DropShadow {
-        transparentBorder: true
-        horizontalOffset: 15
-        verticalOffset: 20
-        color: "#C0CCCCCC"
-        spread: 0
+    background: Rectangle {
+        color: "#E5E5E5"
+        radius: 10
     }
 
     MessageDialog {
