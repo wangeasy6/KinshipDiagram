@@ -51,4 +51,6 @@ qt6_add_qml_module(content
         icons/inch-mask.png
         icons/left-square.svg
         icons/line-edit.svg
+        icons/clockwise.svg
+        icons/anticlockwise.svg
     )

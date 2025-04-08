@@ -27,6 +27,9 @@ Rectangle {
 
     property var selectedPerson: null
     property var allPerson: []
+    property bool unsavedFlag: false
+    property bool closeFlag: false
+    signal closing
 
     PersonDB {
         id: pdb
@@ -143,7 +146,7 @@ Rectangle {
             if (pdb.setProtagonist(selectedPerson.pi.id)) {
                 selectedPerson = null
                 stack.clear(StackView.Immediate)
-                initLoad(conf.dbPath())
+                reload()
             }
         }
     }
@@ -156,7 +159,15 @@ Rectangle {
         property var replacement
 
         onAccepted: {
-            setSidePersonInfo(replacement)
+            if (closeFlag)
+                Qt.quit()
+            else
+                setSidePersonInfo(replacement)
+        }
+
+        onRejected: {
+            if (closeFlag)
+                closeFlag = false
         }
     }
 
@@ -176,7 +187,7 @@ Rectangle {
     }
 
     function setSidePerson(p) {
-        if (btSaveInfo.unsavedFlag) {
+        if (unsavedFlag) {
             isUnsaveDialog.replacement = p
             isUnsaveDialog.open()
         } else
@@ -322,10 +333,10 @@ Rectangle {
                             font.pointSize: 13
 
                             onCursorVisibleChanged: {
-                                console.log("searchInput get CursorVisible: ", cursorVisible)
+                                console.log("searchInput get CursorVisible: ",
+                                            cursorVisible)
                                 resultListView.visible = cursorVisible
-                                if(cursorVisible && text === "")
-                                {
+                                if (cursorVisible && text === "") {
                                     resultModel.clear()
                                     for (var i = 0; i < allPerson.length; i++) {
                                         resultModel.append(allPerson[i])
@@ -737,8 +748,8 @@ Rectangle {
                             Keys.onReturnPressed: {
                                 if (textName.text) {
                                     cropForm.avatarPath = text
-                                    cropForm.rename = textName.text + 
-                                                          pdb.getSettings().photoFormat
+                                    cropForm.rename = textName.text + pdb.getSettings(
+                                                ).photoFormat
                                     cropForm.visible = true
                                 } else {
                                     errorMD.text = "请先填写人员姓名！"
@@ -1112,15 +1123,6 @@ Rectangle {
                         Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                         font.pointSize: 15
                         property var unsavedList: [0, 0, 0, 0, 0, 0, 0, 0, 0]
-                        property bool unsavedFlag: false
-
-                        onUnsavedFlagChanged: {
-                            if (unsavedFlag) {
-                                text = "保存<font color='red'>⚹</font>"
-                            } else {
-                                text = "保存"
-                            }
-                        }
 
                         onClicked: {
                             if (selectedPerson && unsavedFlag) {
@@ -1213,8 +1215,8 @@ Rectangle {
                 id: addEx
                 width: 100
                 height: 50
-                text: selectedPerson ? (selectedPerson.gender ?
-                        ((pdb.getSettings().marriageMode === "modern") ? "前妻" : "前妻/妾") : "前夫") : "前夫"
+                text: selectedPerson ? (selectedPerson.gender ? ((pdb.getSettings(
+                                                                      ).marriageMode === "modern") ? "前妻" : "前妻/妾") : "前夫") : "前夫"
                 font.pointSize: text.length == 2 ? 14 : 12
 
                 onClicked: {
@@ -1251,8 +1253,8 @@ Rectangle {
 
     Rectangle {
         id: subToolRect
-        width: 550  // 20 + button.number * 50  + (button.number - 1) * 10
-                    // = 10 + button.number * 60
+        width: 550 // 20 + button.number * 50  + (button.number - 1) * 10
+        // = 10 + button.number * 60
         height: 70
         color: "#d5d5d5"
         radius: 5
@@ -1413,7 +1415,8 @@ Rectangle {
                                                         })
                         newP.finished.connect(updatePage)
                     } else if (newNode.status === Component.Error) {
-                        console.error("Create LineEdit component error:", newNode.errorString())
+                        console.error("Create LineEdit component error:",
+                                      newNode.errorString())
                     }
                 }
             }
@@ -1441,13 +1444,14 @@ Rectangle {
 
             ToolButton {
                 id: btImport
+                enabled: !startRect.visible
                 width: 50
                 height: 50
                 icon.height: 50
                 icon.width: 50
                 icon.source: "icons/import-outline.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "打开"
+                ToolTip.text: "打开/新建"
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1502,9 +1506,9 @@ Rectangle {
             n += btSaveInfo.unsavedList[i]
         }
         if (n)
-            btSaveInfo.unsavedFlag = true
+            unsavedFlag = true
         else
-            btSaveInfo.unsavedFlag = false
+            unsavedFlag = false
     }
 
     function clearRvalueOfPersonList() {
@@ -1627,9 +1631,7 @@ Rectangle {
                    }, StackView.PushTransition)
     }
 
-    function initLoad(path) {
-        pdb.loadDB(path)
-        console.log("load All Person ", pdb.personListCount())
+    function reload() {
         if (pdb.personListCount() === 0) {
             // Create protagonist
             var newPageAdd = Qt.createComponent("AddProtagonist.qml")
@@ -1655,14 +1657,29 @@ Rectangle {
         }
     }
 
-    // Component.onCompleted: {
-    //     console.log(mainLayout.width, mainLayout.height)
-    //     console.log(headerLayout.width, headerLayout.height)
-    //     console.log(bodyLayout.width, bodyLayout.height)
-    // }
+    function initLoad(path) {
+        pdb.loadDB(path)
+        console.log("load All Person ", pdb.personListCount())
+        reload()
+    }
+
     Component.onDestruction: {
         selectedPerson = null
         stack.clear(StackView.Immediate)
         console.log("Destruction end")
+    }
+
+    onUnsavedFlagChanged: {
+        if (unsavedFlag) {
+            btSaveInfo.text = "保存<font color='red'>⚹</font>"
+        } else {
+            btSaveInfo.text = "保存"
+        }
+    }
+
+    onClosing: {
+        closeFlag = true
+        isUnsaveDialog.replacement = selectedPerson
+        isUnsaveDialog.open()
     }
 }

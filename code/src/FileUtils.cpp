@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMetaObject>
 #include <QMetaProperty>
+#include <QTransform>
 
 
 FileUtils::FileUtils(QObject* parent)
@@ -139,5 +140,43 @@ bool FileUtils::loadFile(const QString& filePath, QObject* textObject)
         textObject->setProperty("text", content);
     }
 
+    return true;
+}
+
+
+QImage FileUtils::rotateAndCrop(const QImage& original, qreal angle, QRect& cropRect)
+{
+    QTransform transform;
+    transform.rotate(angle);
+    QImage rotated = original.transformed(transform, Qt::FastTransformation);
+
+    // Convert to coordinates relative to the upper left corner
+    int left = cropRect.x() + rotated.width() / 2;
+    int top = cropRect.y() + rotated.height() / 2;
+
+    return rotated.copy(left, top, cropRect.width(), cropRect.height());
+}
+
+
+bool FileUtils::saveClipImg(QString source, QString savePath, QRect rect, int rotation)
+{
+    if (source.startsWith("file:///")) {
+        source.remove(0, 8);
+    }
+    if (savePath.startsWith("file:///")) {
+        savePath.remove(0, 8);
+    }
+
+    QImage image(source);
+    if (image.isNull()) {
+        qDebug() << "Image open failed: " << source;
+        return false;
+    }
+
+    QImage result = rotateAndCrop(image, rotation, rect);
+    if (result.isNull())
+        return false;
+
+    result.save(savePath);
     return true;
 }

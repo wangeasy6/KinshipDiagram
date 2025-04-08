@@ -4,12 +4,16 @@ import QtQuick.Layouts
 import Qt.labs.platform
 import Qt5Compat.GraphicalEffects
 
-Rectangle {
+Popup {
     id: thisPage
     width: 500
-    height: 700
+    height: 750
+    anchors.centerIn: parent
+    modal: true
+    visible: true
+    closePolicy: Popup.CloseOnEscape
+    padding: 0
 
-    // property var fileUtils
     property string avatarPath
     property string pathPrefix
     property string rename
@@ -19,7 +23,9 @@ Rectangle {
     ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
-            height: 50
+            Layout.preferredHeight: 50
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
             spacing: 20
 
             Label {
@@ -29,8 +35,8 @@ Rectangle {
 
             TextField {
                 id: textAvatarPath
-                width: 290
-                height: 36
+                Layout.fillWidth: true
+                Layout.preferredHeight: 40
                 text: avatar.source
                 verticalAlignment: Text.AlignVCenter
                 font.pointSize: 10
@@ -50,6 +56,7 @@ Rectangle {
                 onAccepted: {
                     console.log("You selected:", selectAvatarFileDialog.file)
                     avatar.source = selectAvatarFileDialog.file
+                    avatar.rotation = 0
 
                     if (rename) {
                         picName.text = rename
@@ -77,7 +84,46 @@ Rectangle {
             }
         }
 
+        Row {
+            spacing: 10
+            Layout.preferredHeight: 50
+            Layout.fillWidth: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
+
+            Label {
+                text: qsTr("重命名：")
+                anchors.verticalCenter: parent.verticalCenter
+                leftPadding: 5
+                font.pointSize: 14
+            }
+
+            TextField {
+                id: picName
+                height: 40
+                width: 150
+                text: ""
+                anchors.verticalCenter: parent.verticalCenter
+                onTextChanged: {
+                    var targetFile = pathPrefix + text
+                    if (fileUtils.isFileExist(targetFile)) {
+                        notes.text = "将覆盖同名文件！"
+                    }
+                }
+            }
+
+            Label {
+                id: notes
+                text: ""
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 5
+                color: "red"
+                font.pointSize: 11
+            }
+        }
+
         Rectangle {
+            id: avatarRect
             width: 500
             height: 500
             clip: true
@@ -88,33 +134,23 @@ Rectangle {
                 fillMode: Image.PreserveAspectFit
                 visible: true
                 smooth: true
-                z: 2
+                z: 1
 
                 transform: Scale {
-                    id: scaleTransform
+                    id: avatarScale
                     // xScale: 1
                     // yScale: 1
                 }
 
+                // onRotationChanged: {
+                //     var rotatedPos = avatar.mapToItem(parent, 0, 0)
+                //     console.log("实际位置:", rotatedPos.x, rotatedPos.y)
+                // }
                 onStatusChanged: {
                     if (status === Image.Ready) {
                         // console.log("[Cropping] Avatar:", source)
+                        avatar.rotation = 0
                         avtarDisplayAdjust()
-                    }
-                }
-            }
-
-            Image {
-                id: avatarCrop
-                source: avatar.source
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                visible: false
-
-                onStatusChanged: {
-                    if (status === Image.Ready) {
-                        // console.log("[Cropping] Avatar crop:", source)
-                        onSave()
                     }
                 }
             }
@@ -143,8 +179,8 @@ Rectangle {
                              var scaleValue = 1.1
                              if (wheel.angleDelta.y > 0) {
                                  // 放大
-                                 scaleTransform.xScale *= scaleValue
-                                 scaleTransform.yScale *= scaleValue
+                                 avatarScale.xScale *= scaleValue
+                                 avatarScale.yScale *= scaleValue
 
                                  if (wheel.x > avatar.x) {
                                      avatar.x -= (wheel.x - avatar.x) * 0.11
@@ -158,8 +194,8 @@ Rectangle {
                                  }
                              } else {
                                  // 缩小
-                                 scaleTransform.xScale /= scaleValue
-                                 scaleTransform.yScale /= scaleValue
+                                 avatarScale.xScale /= scaleValue
+                                 avatarScale.yScale /= scaleValue
 
                                  if (wheel.x > avatar.x) {
                                      avatar.x += (wheel.x - avatar.x) * 0.1
@@ -184,7 +220,7 @@ Rectangle {
                 fillMode: Image.PreserveAspectCrop
                 visible: true
                 anchors.centerIn: parent
-                z: 3
+                z: 2
             }
 
             Image {
@@ -194,43 +230,80 @@ Rectangle {
                 smooth: true
                 visible: true
                 opacity: 0.8
-                z: 2
+                z: 1
             }
         }
 
         Row {
-            spacing: 10
+            Layout.alignment: Qt.AlignHCenter
             Layout.preferredHeight: 50
-            Layout.fillWidth: true
-            Label {
-                text: qsTr("重命名：")
-                anchors.verticalCenter: parent.verticalCenter
-                leftPadding: 5
-                font.pointSize: 14
-            }
+            spacing: 10
 
-            TextField {
-                id: picName
-                height: 36
-                Layout.preferredHeight: 42
-                Layout.fillWidth: true
-                text: ""
+            ToolButton {
+                width: 50
+                height: 50
+                icon.height: 30
+                icon.width: 30
+                icon.source: "icons/anticlockwise.svg"
                 anchors.verticalCenter: parent.verticalCenter
-                onTextChanged: {
-                    var targetFile = pathPrefix + text
-                    if (fileUtils.isFileExist(targetFile)) {
-                        notes.text = "将覆盖同名文件！"
-                    }
+                display: AbstractButton.IconOnly
+
+                ToolTip {
+                    text: "逆时针旋转"
+                    delay: 500
+                    visible: parent.hovered
+                    z: 3
+                }
+
+                onClicked: {
+                    checkRotationText()
+                    avatar.rotation -= parseInt(textRotation.text)
                 }
             }
 
-            Label {
-                id: notes
-                text: ""
+            TextField {
+                id: textRotation
+                height: 40
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.leftMargin: 5
-                color: "red"
-                font.pointSize: 11
+                width: 60
+                text: "90"
+
+                Text {
+                    anchors {
+                        top: parent.top
+                        right: parent.right
+                    }
+                    // topPadding: 2
+                    rightPadding: 2
+                    text: "°"
+                    font.pixelSize: 24
+                }
+
+                onEditingFinished: {
+                    checkRotationText()
+                }
+            }
+
+            ToolButton {
+                width: 50
+                height: 50
+                icon.height: 30
+                icon.width: 30
+                icon.source: "icons/clockwise.svg"
+                anchors.verticalCenter: parent.verticalCenter
+                display: AbstractButton.IconOnly
+
+                ToolTip {
+                    text: "顺时针旋转"
+                    delay: 500
+                    visible: parent.hovered
+                    z: 3
+                }
+
+                onClicked: {
+                    checkRotationText()
+                    avatar.rotation += parseInt(textRotation.text)
+                }
             }
         }
 
@@ -270,18 +343,40 @@ Rectangle {
                 font.pointSize: 16
 
                 onClicked: {
-                    // console.log(avatar.x, avatar.y, scaleTransform.xScale)
-                    var x = (125 - avatar.x) / scaleTransform.xScale
-                    var y = (75 - avatar.y) / scaleTransform.yScale
-                    var w = 250 / scaleTransform.xScale
-                    var h = 350 / scaleTransform.yScale
+                    // console.log("avatar: ", avatar.x, avatar.y,
+                    //             avatarScale.xScale)
+                    // console.log("avatar: ", avatar.width, avatar.height)
 
-                    // When setting the sourceClipRect, the image will reload;
-                    // therefore, set the saveFlag to wait for Image.Ready.
-                    avatarCrop.sourceClipRect = Qt.rect(x, y, w, h)
-                    saveFlag = true
+                    var x = (125 - avatar.x) / avatarScale.xScale
+                    var y = (75 - avatar.y) / avatarScale.yScale
+                    // Relative to the center point
+                    x -= avatar.width / 2
+                    y -= avatar.height / 2
+                    var w = 250 / avatarScale.xScale
+                    var h = 350 / avatarScale.yScale
+
+                    var filePath = conf.dbPrefix + picName.text
+                    var ret = fileUtils.saveClipImg(avatar.source, filePath,
+                                                    Qt.rect(x, y, w, h),
+                                                    avatar.rotation)
+                    if (ret)
+                        saved(filePath)
+                    saveFlag = false
+                    thisPage.visible = false
                 }
             }
+        }
+    }
+
+    function checkRotationText() {
+        var num = parseInt(textRotation.text)
+        if (isNaN(num)) {
+            textRotation.text = "0"
+        } else {
+            while (num < 0)
+                num += 360
+            num %= 360
+            textRotation.text = num
         }
     }
 
@@ -289,7 +384,9 @@ Rectangle {
         if (!saveFlag)
             return
 
-        avatarCrop.grabToImage(function (result) {
+        console.log("avatarCrop.rotation", avatarCrop.rotation)
+        // console.log("avatarCrop.Angle", avatarCropAngle.angle)
+        avatarCropItem.grabToImage(function (result) {
             if (picName.text) {
                 result.saveToFile(conf.dbPrefix + picName.text)
                 saved(conf.dbPrefix + picName.text)
@@ -311,8 +408,8 @@ Rectangle {
 
         // console.log("avtarDisplayAdjust0:",
         //     avatar.sourceSize.width, avatar.sourceSize.height)
-        scaleTransform.xScale = 1
-        scaleTransform.yScale = 1
+        avatarScale.xScale = 1
+        avatarScale.yScale = 1
         if (avatar.sourceSize.width > avatar.sourceSize.height) {
             maxPix = avatar.sourceSize.width
             minPix = avatar.sourceSize.height
@@ -339,11 +436,11 @@ Rectangle {
             avatar.x = (500 - (minPix / p)) / 2
         }
 
-        scaleTransform.xScale /= p
-        scaleTransform.yScale /= p
+        avatarScale.xScale /= p
+        avatarScale.yScale /= p
 
         // console.log("avtarDisplayAdjust2:",
-        //     avatar.width, avatar.height, avatar.x, avatar.y, scaleTransform.xScale)
+        //     avatar.width, avatar.height, avatar.x, avatar.y, avatarScale.xScale)
     }
 
     Component.onCompleted: {

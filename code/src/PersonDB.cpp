@@ -144,33 +144,6 @@ PersonDB::~PersonDB()
 }
 
 
-// QList<int> PersonDB::str2qlist(QString str)
-// {
-//     qDebug() << "str2qlist: " << str;
-//     // QJsonParseError *error = new QJsonParseError();
-//     QJsonParseError error;
-//     QJsonDocument jsonDoc = QJsonDocument::fromJson(str.toUtf8(), &error);
-//     if (!jsonDoc.isArray()) {
-//         qWarning("JSON is not an array");
-//         qDebug() << error.errorString();
-//         return QList<int>(); // 返回空列表
-//     }
-//     // 获取JSON数组
-//     QJsonArray jsonArray = jsonDoc.array();
-
-//     QList<int> list;
-//     for (const QJsonValue &value : jsonArray) {
-//         if (value.isString()) {
-//             list.append(value.toInt());
-//         } else {
-//             qWarning("JSON array contains non-string values");
-//         }
-//     }
-
-//     return list;
-// }
-
-
 bool PersonDB::str2qlist(QList<int>* list, QString str)
 {
     if (str.isEmpty()) {
@@ -427,6 +400,7 @@ bool PersonDB::setProtagonist(int id)
     if (id >= 0 && id < m_personList.length()) {
         m_personList[m_protagonistId]->_protagonist = 0;
         updatePerson(m_protagonistId);
+
         m_personList[id]->_protagonist = 1;
         m_protagonistId = id;
         updatePerson(id);
@@ -698,38 +672,40 @@ bool PersonDB::delPerson(int index)
 }
 
 
+// 修改 addPerson 方法中的SQL语句
 bool PersonDB::addPerson(PersonInfo* p)
 {
-    QString marriages_str = qlist2str(&p->_marriages);
-    QString sqlStr = QString("INSERT INTO person_list VALUES (" + QString::number(p->_id) +
-                             ", " + QString::number(p->_protagonist) +
-                             ", \"" + p->_name +
-                             "\", \"" + p->_avatarPath +
-                             "\", " + QString::number(p->_gender) +
-                             ", \"" + p->_call +
-                             "\", \"" + p->_subCall +
-                             "\", \"" + p->_birthday +
-                             "\", " + QString::number(p->_birthTraditional) +
-                             ", " + QString::number(p->_fRanking) +
-                             ", " + QString::number(p->_mRanking) +
-                             ", " + QString::number(p->_isDead) +
-                             ", " + QString::number(p->_deathTraditional) +
-                             ", \"" + p->_death +
-                             "\", \"" + p->_notes +
-                             "\", " + QString::number(p->_father) +
-                             ", " + QString::number(p->_mother) +
-                             ", \"" + qlist2str(&p->_children) +
-                             "\", \"" + marriages_str +
-                             "\");");
+    QSqlQuery query;
+    query.prepare("INSERT INTO person_list VALUES (:id, :protagonist, :name, :avatar_path, :gender, :call, :sub_call, :birthday, :birth_trad, :f_rank, :m_rank, :is_dead, :death_trad, :death, :notes, :father, :mother, :children, :marriages)");
+    query.bindValue(":id", p->_id);
+    query.bindValue(":protagonist", p->_protagonist);
+    query.bindValue(":name", p->_name);
+    query.bindValue(":avatar_path", p->_avatarPath);
+    query.bindValue(":gender", p->_gender);
+    query.bindValue(":call", p->_call);
+    query.bindValue(":sub_call", p->_subCall);
+    query.bindValue(":birthday", p->_birthday);
+    query.bindValue(":birth_trad", p->_birthTraditional);
+    query.bindValue(":f_rank", p->_fRanking);
+    query.bindValue(":m_rank", p->_mRanking);
+    query.bindValue(":is_dead", p->_isDead);
+    query.bindValue(":death_trad", p->_deathTraditional);
+    query.bindValue(":death", p->_death);
+    query.bindValue(":notes", p->_notes);
+    query.bindValue(":father", p->_father);
+    query.bindValue(":mother", p->_mother);
+    query.bindValue(":children", qlist2str(&p->_children) );
+    query.bindValue(":marriages", qlist2str(&p->_marriages) );
+    query.bindValue(":id", p->_id);
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    if (query.exec()) {
         // emit personListChanged();
         return true;
     }
 
-    qDebug() << "Failed add Person." << sqlQuery.lastError().text();
+    qDebug() << "Failed add Person." << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
+
     if (p->_id == m_personList.count() - 1)
         m_personList.removeLast();
     else
@@ -761,35 +737,34 @@ int PersonDB::parentIsSync(int index)
 
 bool PersonDB::updatePerson(const PersonInfo* p)
 {
-    QString sqlStr = QString("UPDATE person_list SET protagonist = " + QString::number(
-                                 p->_protagonist) +
-                             ",name = \"" + p->_name +
-                             "\",avatar_path = \"" + p->_avatarPath +
-                             "\",gender = " + QString::number(p->_gender) +
-                             ",call = \"" + p->_call +
-                             "\",sub_call = \"" + p->_subCall +
-                             "\",birthday = \"" + p->_birthday +
-                             "\",birth_trad = " + QString::number(p->_birthTraditional) +
-                             ",f_rank = " + QString::number(p->_fRanking) +
-                             ",m_rank = " + QString::number(p->_mRanking) +
-                             ",is_dead = " + QString::number(p->_isDead) +
-                             ",death_trad = " + QString::number(p->_deathTraditional) +
-                             ",death = \"" + p->_death +
-                             "\",notes = \"" + p->_notes +
-                             "\",father = " + QString::number(p->_father) +
-                             ",mother = " + QString::number(p->_mother) +
-                             ",children = \"" + qlist2str(&p->_children) +
-                             "\",marriages = \"" + qlist2str(&p->_marriages) +
-                             "\" WHERE id=" + QString::number(p->_id) +
-                             ";");
+    QSqlQuery query;
+    query.prepare("UPDATE person_list SET protagonist = :protagonist, name = :name, avatar_path = :avatar_path, gender = :gender, call = :call, sub_call = :sub_call, birthday = :birthday, birth_trad = :birth_trad, f_rank = :f_rank, m_rank = :m_rank, is_dead = :is_dead, death_trad = :death_trad, death = :death, notes = :notes, father = :father, mother = :mother, children = :children, marriages = :marriages WHERE id = :id");
+    query.bindValue(":protagonist", p->_protagonist);
+    query.bindValue(":name", p->_name);
+    query.bindValue(":avatar_path", p->_avatarPath);
+    query.bindValue(":gender", p->_gender);
+    query.bindValue(":call", p->_call);
+    query.bindValue(":sub_call", p->_subCall);
+    query.bindValue(":birthday", p->_birthday);
+    query.bindValue(":birth_trad", p->_birthTraditional);
+    query.bindValue(":f_rank", p->_fRanking);
+    query.bindValue(":m_rank", p->_mRanking);
+    query.bindValue(":is_dead", p->_isDead);
+    query.bindValue(":death_trad", p->_deathTraditional);
+    query.bindValue(":death", p->_death);
+    query.bindValue(":notes", p->_notes);
+    query.bindValue(":father", p->_father);
+    query.bindValue(":mother", p->_mother);
+    query.bindValue(":children", qlist2str(&p->_children) );
+    query.bindValue(":marriages", qlist2str(&p->_marriages) );
+    query.bindValue(":id", p->_id);
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    if (query.exec()) {
         return true;
     }
 
-    qDebug() << "Failed update Person." << sqlQuery.lastError().text();
+    qDebug() << "Failed update Person." << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
     return false;
 }
 
@@ -803,18 +778,18 @@ bool PersonDB::updatePerson(int pid)
 bool PersonDB::updateMRanking(const int pid, const int ranking)
 {
     m_personList[pid]->_mRanking = ranking;
-    QString sqlStr = QString("UPDATE person_list SET "
-                             "m_rank = " + QString::number(ranking) +
-                             " WHERE id=" + QString::number(pid) +
-                             ";");
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    QSqlQuery query;
+    query.prepare("UPDATE person_list SET m_rank = :m_rank WHERE id = :id");
+    query.bindValue(":m_rank", ranking);
+    query.bindValue(":id", pid);
+
+    if (query.exec()) {
         return true;
     }
 
-    qDebug() << "Failed update Person." << sqlQuery.lastError().text();
+    qDebug() << "Failed update Person." << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
     return false;
 }
 
@@ -822,60 +797,41 @@ bool PersonDB::updateMRanking(const int pid, const int ranking)
 bool PersonDB::updateFRanking(const int pid, const int ranking)
 {
     m_personList[pid]->_fRanking = ranking;
-    QString sqlStr = QString("UPDATE person_list SET "
-                             "f_rank = " + QString::number(ranking) +
-                             " WHERE id=" + QString::number(pid) +
-                             ";");
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    QSqlQuery query;
+    query.prepare("UPDATE person_list SET f_rank = :f_rank WHERE id = :id");
+    query.bindValue(":f_rank", ranking);
+    query.bindValue(":id", pid);
+
+    if (query.exec()) {
         return true;
     }
 
-    qDebug() << "Failed update Person." << sqlQuery.lastError().text();
+    qDebug() << "Failed update Person." << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
     return false;
 }
 
 
 bool PersonDB::updateChildren(const int pid)
 {
-    QString sqlStr = QString("UPDATE person_list SET "
-                             "children = \"" + qlist2str(&m_personList[pid]->_children) +
-                             "\" WHERE id=" + QString::number(pid) +
-                             ";");
-
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    /*
-    sqlQuery.prepare("UPDATE person_list SET children = :children WHERE id = :id");
-    sqlQuery.bindValue(":children", qlist2str(&m_personList[pid]->_children));
-    sqlQuery.bindValue(":id", pid);
-    */
-    if (sqlQuery.exec(sqlStr)) {
-        return true;
-    }
-
-    qDebug() << "Failed update Person: " << sqlQuery.lastError().text();
-    return false;
+    return updateChildren(pid, qlist2str(&m_personList[pid]->_children));
 }
 
 
 bool PersonDB::updateChildren(const int pid, const QString childrenStr)
 {
-    str2qlist(&m_personList[pid]->_children, childrenStr);
-    QString sqlStr = QString("UPDATE person_list SET "
-                             "children = \"" + childrenStr +
-                             "\" WHERE id=" + QString::number(pid) +
-                             ";");
+    QSqlQuery query;
+    query.prepare("UPDATE person_list SET children = :children WHERE id = :id");
+    query.bindValue(":children", childrenStr);
+    query.bindValue(":id", pid);
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    if (query.exec()) {
         return true;
     }
 
-    qDebug() << "Failed update Person: " << sqlQuery.lastError().text();
+    qDebug() << "Failed update Person: " << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
     return false;
 }
 
@@ -912,16 +868,17 @@ bool PersonDB::adjustChildrenRanking(PersonInfo* p, int pid, int shift)
 }
 
 
-bool PersonDB::delPersonDB(int id)
+bool PersonDB::delPersonDB(int pid)
 {
-    QString sqlStr = QString("DELETE FROM person_list WHERE id = \"" + QString::number(id) + "\";");
+    QSqlQuery query;
+    query.prepare("DELETE FROM person_list WHERE id = ?");
+    query.addBindValue(pid);
 
-    qDebug().noquote() << sqlStr;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec(sqlStr)) {
+    if (query.exec()) {
         return true;
     }
 
-    qDebug() << "Failed delete person " << sqlQuery.lastError().text();
+    qDebug() << "Failed delete Person: " << query.lastError().text();
+    qDebug().noquote() << query.lastQuery();
     return false;
 }
