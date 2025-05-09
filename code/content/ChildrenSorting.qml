@@ -2,6 +2,7 @@ import QtQuick 6.2
 import QtQuick.Controls 6.2
 import QtQuick.Layouts
 import Qt.labs.platform
+import Qt5Compat.GraphicalEffects
 
 Popup {
     id: thisPage
@@ -29,8 +30,8 @@ Popup {
 
     MessageDialog {
         id: isUnsaveDialog
-        title: "提示："
-        text: "放弃修改？"
+        title: qsTr("提示：")
+        text: qsTr("放弃修改？")
         buttons: MessageDialog.No | MessageDialog.Yes
         property var replacement
 
@@ -52,7 +53,7 @@ Popup {
             // Father
             Label {
                 id: fatherLabel
-                text: "父排行"
+                text: qsTr("父排行")
                 Layout.fillWidth: true
                 font.pointSize: 11
                 horizontalAlignment: Text.AlignHCenter
@@ -171,7 +172,7 @@ Popup {
             Layout.fillWidth: true
 
             Label {
-                text: "母排行"
+                text: qsTr("母排行")
                 Layout.fillWidth: true
                 font.pointSize: 11
                 horizontalAlignment: Text.AlignHCenter
@@ -333,9 +334,9 @@ Popup {
 
                 onUnsavedFlagChanged: {
                     if (unsavedFlag) {
-                        text = "保存<font color='red'>⚹</font>"
+                        text = qsTr("保存<font color='red'>⚹</font>")
                     } else {
-                        text = "保存"
+                        text = qsTr("保存")
                     }
                 }
 
@@ -381,7 +382,7 @@ Popup {
         if (isSync === 0) {
             motherLayout.visible = false
             motherLayout.enabled = false
-            fatherLabel.text = "排名"
+            fatherLabel.text = qsTr("排名")
             fatherP = pdb.getFather(startPersonId)
             motherP = pdb.getMother(startPersonId)
             for (i = 0; i < fatherP.children.length; i++) {

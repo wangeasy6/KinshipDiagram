@@ -54,7 +54,7 @@ Rectangle {
                 spacing: 15
 
                 Button {
-                    text: "新建图谱"
+                    text: qsTr("新建图谱")
                     font.pointSize: 8
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                     icon.source: "icons/add.svg"
@@ -68,7 +68,7 @@ Rectangle {
 
                 FileDialog {
                     id: openFile
-                    title: "Select a map"
+                    title: qsTr("选择照片")
                     nameFilters: ["DB Files (*.sqlite3)"]
 
                     onAccepted: {
@@ -85,7 +85,7 @@ Rectangle {
                 }
 
                 Button {
-                    text: "打开图谱"
+                    text: qsTr("打开图谱")
                     font.pointSize: 8
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                     icon.source: "icons/search.svg"
@@ -110,7 +110,7 @@ Rectangle {
                 Label {
                     id: title
                     height: 30
-                    text: openedList.count === 0 ? "暂无历史打开！" : "历史打开："
+                    text: openedList.count === 0 ? qsTr("暂无历史打开！") : qsTr("历史打开：")
                     verticalAlignment: Text.AlignVCenter
                     Layout.preferredHeight: 40
                     Layout.fillWidth: true

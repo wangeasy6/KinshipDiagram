@@ -15,7 +15,6 @@ import Qt.labs.platform
 
 import easy.qt.PersonDB 0.1
 import easy.qt.Person 0.1
-import easy.qt.Config 0.1
 import easy.qt.FileUtils 0.1
 
 Rectangle {
@@ -35,11 +34,6 @@ Rectangle {
         id: pdb
     }
 
-    Config {
-        id: conf
-        // If not found def_con.json
-    }
-
     Item {
         id: settings
         property var settingsManager: pdb.getSettings()
@@ -52,7 +46,7 @@ Rectangle {
 
     MessageDialog {
         id: errorMD
-        title: "提示："
+        title: qsTr("提示：")
         visible: false
         onAccepted: {
             errorMD.visible = false
@@ -61,9 +55,9 @@ Rectangle {
 
     MessageDialog {
         id: isCropMD
-        title: "提示："
+        title: qsTr("提示：")
         visible: false
-        text: "是否对照片进行裁剪？"
+        text: qsTr("是否裁剪照片？")
         buttons: MessageDialog.No | MessageDialog.Yes
 
         onAccepted: {
@@ -108,7 +102,7 @@ Rectangle {
 
     MessageDialog {
         id: deleteConfirmDialog
-        title: "提示："
+        title: qsTr("提示：")
         buttons: MessageDialog.No | MessageDialog.Yes
 
         onAccepted: {
@@ -145,7 +139,7 @@ Rectangle {
 
     MessageDialog {
         id: isSetProtagonist
-        title: "提示："
+        title: qsTr("提示：")
         buttons: MessageDialog.No | MessageDialog.Yes
 
         onAccepted: {
@@ -159,8 +153,8 @@ Rectangle {
 
     MessageDialog {
         id: isUnsaveDialog
-        title: "提示："
-        text: "放弃修改？"
+        title: qsTr("提示：")
+        text: qsTr("放弃修改？")
         buttons: MessageDialog.No | MessageDialog.Yes
         property var replacement
 
@@ -211,7 +205,7 @@ Rectangle {
         avatar.source = selectedPerson.avatarPath
         addFather.enabled = p.pi.father === -1 ? true : false
         addMother.enabled = p.pi.mother === -1 ? true : false
-        addMate.text = p.gender ? "妻" : "夫"
+        addMate.text = p.gender ? qsTr("妻") : qsTr("夫")
         if (p.pi.marriages.length > 0 && p.pi.marriages[0] !== -1)
             addMate.enabled = false
         else
@@ -441,7 +435,7 @@ Rectangle {
 
                         Label {
                             id: startLabel
-                            text: "从"
+                            text: qsTr("从")
                             font.pointSize: 14
                             height: 60
                             verticalAlignment: Text.AlignVCenter
@@ -458,7 +452,7 @@ Rectangle {
                                 startListModel.clear()
                                 if (text) {
                                     startListModel.append({
-                                                              "name": "主人公"
+                                                              "name": qsTr("主人公")
                                                           })
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
@@ -521,7 +515,7 @@ Rectangle {
                         }
 
                         Label {
-                            text: "到"
+                            text: qsTr("到")
                             font.pointSize: 14
                             height: 60
                             verticalAlignment: Text.AlignVCenter
@@ -537,7 +531,7 @@ Rectangle {
                                 endListModel.clear()
                                 if (text) {
                                     endListModel.append({
-                                                            "name": "主人公"
+                                                            "name": qsTr("主人公")
                                                         })
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
@@ -641,7 +635,7 @@ Rectangle {
                     id: startRect
                     visible: true
                     anchors.centerIn: parent
-                    historyList: conf.historyList
+                    historyList: conf ? conf.historyList : null
 
                     onOpenMap: path => {
                                    selectedPerson = null
@@ -758,7 +752,7 @@ Rectangle {
                                                 ).photoFormat
                                     cropForm.visible = true
                                 } else {
-                                    errorMD.text = "请先填写人员姓名！"
+                                    errorMD.text = qsTr("请先填写人员姓名！")
                                     errorMD.visible = true
                                 }
                             }
@@ -790,7 +784,7 @@ Rectangle {
                                 if (textName.text)
                                     isCropMD.visible = true
                                 else {
-                                    errorMD.text = "请先填写人员姓名！"
+                                    errorMD.text = qsTr("请先填写人员姓名！")
                                     errorMD.visible = true
                                 }
                             }
@@ -808,7 +802,7 @@ Rectangle {
                             leftPadding: 0
                             bottomPadding: 0
                             topPadding: 0
-                            ToolTip.text: "选择照片"
+                            ToolTip.text: qsTr("选择照片")
                             ToolTip.delay: 500
                             ToolTip.visible: hovered
 
@@ -856,7 +850,7 @@ Rectangle {
                             Button {
                                 Layout.maximumWidth: 90
                                 Layout.preferredHeight: 42
-                                ToolTip.text: "修改排名"
+                                ToolTip.text: qsTr("修改排名")
                                 ToolTip.delay: 500
                                 ToolTip.visible: hovered
 
@@ -864,7 +858,6 @@ Rectangle {
                                     id: rankingText
                                     anchors.fill: parent
                                     font.pointSize: 11
-                                    // text: ""
                                     color: "white"
                                     padding: 0
                                     horizontalAlignment: Text.AlignHCenter
@@ -893,7 +886,7 @@ Rectangle {
                                         var isSync = pdb.parentIsSync(
                                                     selectedPerson.pi.id)
                                         if (isSync === -3) {
-                                            errorMD.text = "子女排序需要先添加父母！"
+                                            errorMD.text = qsTr("子女排序需要先添加父母！")
                                             errorMD.visible = true
                                         } else
                                             openChildrenSorting(isSync)
@@ -1185,7 +1178,7 @@ Rectangle {
                 id: addFather
                 width: 50
                 height: 50
-                text: "父"
+                text: qsTr("父")
                 font.pointSize: 14
 
                 onClicked: {
@@ -1197,7 +1190,7 @@ Rectangle {
                 id: addMother
                 width: 50
                 height: 50
-                text: "母"
+                text: qsTr("母")
                 font.pointSize: 14
 
                 onClicked: {
@@ -1209,7 +1202,7 @@ Rectangle {
                 id: addMate
                 width: 50
                 height: 50
-                text: selectedPerson ? (selectedPerson.gender ? "夫" : "妻") : "夫"
+                text: selectedPerson ? (selectedPerson.gender ? qsTr("夫") : qsTr("妻")) : qsTr("夫")
                 font.pointSize: 14
 
                 onClicked: {
@@ -1222,7 +1215,7 @@ Rectangle {
                 width: 100
                 height: 50
                 text: selectedPerson ? (selectedPerson.gender ? ((pdb.getSettings(
-                                                                      ).marriageMode === "modern") ? "前妻" : "前妻/妾") : "前夫") : "前夫"
+                                                                      ).marriageMode === "modern") ? qsTr("前妻") : qsTr("前妻/妾")) : qsTr("前夫")) : qsTr("前夫")
                 font.pointSize: text.length == 2 ? 14 : 12
 
                 onClicked: {
@@ -1284,7 +1277,7 @@ Rectangle {
                 icon.width: 34
                 icon.source: "icons/home-8-line.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "回到初始页"
+                ToolTip.text: qsTr("回到初始页")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1307,7 +1300,7 @@ Rectangle {
                 icon.width: 34
                 icon.source: "icons/refresh.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "刷新当前页"
+                ToolTip.text: qsTr("刷新当前页")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1328,7 +1321,7 @@ Rectangle {
                 icon.source: "icons/arrow-back-outline.svg"
                 display: AbstractButton.IconOnly
                 enabled: stack.depth > 1 ? true : false
-                ToolTip.text: "上一页"
+                ToolTip.text: qsTr("上一页")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1357,7 +1350,7 @@ Rectangle {
                 icon.width: 50
                 icon.source: "icons/add.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "添加人员"
+                ToolTip.text: qsTr("添加人员")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1384,7 +1377,7 @@ Rectangle {
                 icon.width: 50
                 icon.source: "icons/subtract.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "删除人员"
+                ToolTip.text: qsTr("删除人员")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1409,7 +1402,7 @@ Rectangle {
                 icon.source: "icons/line-edit.svg"
                 icon.height: 34
                 icon.width: 34
-                ToolTip.text: "编辑关系"
+                ToolTip.text: qsTr("编辑关系")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1436,13 +1429,13 @@ Rectangle {
                 icon.width: 34
                 icon.source: "icons/star.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "设置为关键人员"
+                ToolTip.text: qsTr("设为主角")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
                 onClicked: {
                     if (selectedPerson.pi.id != pdb.getProtagonistId()) {
-                        isSetProtagonist.text = "确定设置：" + selectedPerson.name + " 为主人公？"
+                        isSetProtagonist.text = qsTr("确定设置：") + selectedPerson.name + qsTr(" 为主角？")
                         isSetProtagonist.open()
                     }
                 }
@@ -1457,7 +1450,7 @@ Rectangle {
                 icon.width: 50
                 icon.source: "icons/import-outline.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "打开/新建"
+                ToolTip.text: qsTr("打开/新建")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
@@ -1478,13 +1471,13 @@ Rectangle {
                 icon.width: 50
                 icon.source: "icons/export-outline.svg"
                 display: AbstractButton.IconOnly
-                ToolTip.text: "导出图片"
+                ToolTip.text: qsTr("导出图片")
                 ToolTip.delay: 500
                 ToolTip.visible: hovered
 
                 FileDialog {
                     id: saveImgFileDialog
-                    title: "Save as"
+                    title: qsTr("保存为：")
                     fileMode: FileDialog.SaveFile
                     nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp)"]
 
@@ -1549,6 +1542,9 @@ Rectangle {
                                             })
             newP.beforeSave.connect(clearRvalueOfPersonList)
             newP.finished.connect(updatePage)
+        } else if (newNode.status === Component.Error) {
+            console.error("Create AddPerson component error:",
+                          newNode.errorString())
         }
         addToolRect.visible = false
     }
@@ -1561,6 +1557,9 @@ Rectangle {
                                                 "isSync": isSync
                                             })
             newP.finished.connect(updatePage)
+        } else if (newNode.status === Component.Error) {
+            console.error("Create ChildrenSorting component error:",
+                          newNode.errorString())
         }
     }
 
@@ -1603,7 +1602,7 @@ Rectangle {
 
     function searchPathByName(startName, endName) {
         if (startName === endName) {
-            errorMD.text = "我就是我，不一样的烟火！"
+            errorMD.text = qsTr("我就是我，不一样的烟火！")
             errorMD.open()
             return
         }
@@ -1614,7 +1613,7 @@ Rectangle {
         else
             startPerson = pdb.getPersonByName(startName)
         if (!startPerson) {
-            errorMD.text = "谱中未录其人：" + startName + "！"
+            errorMD.text = qsTr("谱中未录其人：") + startName + "！"
             errorMD.open()
             return
         }
@@ -1625,7 +1624,7 @@ Rectangle {
         else
             endPerson = pdb.getPersonByName(endName)
         if (!endPerson) {
-            errorMD.text = "谱中未录其人：" + endName + "！"
+            errorMD.text = qsTr("谱中未录其人：") + endName + "！"
             errorMD.open()
             return
         }
@@ -1644,6 +1643,9 @@ Rectangle {
             if (newPageAdd.status === Component.Ready) {
                 let newP = newPageAdd.createObject(mainRect)
                 newP.finished.connect(newProtagnistFinished)
+            } else if (newPageAdd.status === Component.Error) {
+                console.error("Create AddProtagonist component error:",
+                              newPageAdd.errorString())
             }
         } else {
             for (var i = 0; i < pdb.personListCount(); i++) {
@@ -1677,9 +1679,9 @@ Rectangle {
 
     onUnsavedFlagChanged: {
         if (unsavedFlag) {
-            btSaveInfo.text = "保存<font color='red'>⚹</font>"
+            btSaveInfo.text = qsTr("保存<font color='red'>⚹</font>")
         } else {
-            btSaveInfo.text = "保存"
+            btSaveInfo.text = qsTr("保存")
         }
     }
 

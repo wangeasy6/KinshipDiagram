@@ -27,9 +27,9 @@ Popup {
 
     MessageDialog {
         id: isCropMD
-        title: "提示："
+        title: qsTr("提示：")
         visible: false
-        text: "是否对照片进行裁剪？"
+        text: qsTr("是否裁剪照片？")
         // buttons: MessageDialog.Ok | MessageDialog.Cancel
         buttons: MessageDialog.No | MessageDialog.Yes
 
@@ -103,7 +103,7 @@ Popup {
             Layout.preferredHeight: 70
             color: "#ddffffff"
             // Layout.leftMargin: 20
-            text: "添加人员：主人公"
+            text: qsTr("添加人员：主人公")
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: false
@@ -170,7 +170,7 @@ Popup {
 
                     FileDialog {
                         id: selectAvatarFileDialog
-                        title: "Select a Photo"
+                        title: qsTr("选择照片")
                         // selectFolder: false
                         // selectMultiple: false
                         // supportedSchemes: [ "file" ]
@@ -307,7 +307,7 @@ Popup {
                             text: "1"
                             onTextEdited: {
                                 if (!isPositiveInteger(text)) {
-                                    textSsarMsg.text = "请输入正整数！"
+                                    textSsarMsg.text = qsTr("请输入正整数！")
                                 }
                             }
                         }

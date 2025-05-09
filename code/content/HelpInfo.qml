@@ -9,7 +9,7 @@ Popup {
     anchors.centerIn: parent
     modal: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    visible : true
+    visible: true
 
     Rectangle {
         anchors.fill: parent
@@ -20,7 +20,7 @@ Popup {
             anchors.margins: 10
 
             Label {
-                text: "软件信息"
+                text: qsTr("软件信息")
                 horizontalAlignment: Text.AlignHCenter
                 font.pointSize: 16
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -38,7 +38,7 @@ Popup {
             }
 
             Label {
-                text: "用户指南"
+                text: qsTr("用户指南")
                 horizontalAlignment: Text.AlignHCenter
                 font.pointSize: 16
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
@@ -61,7 +61,7 @@ Popup {
                     wrapMode: Text.Wrap
                     textFormat: Text.RichText
                     readOnly: true
-                    implicitWidth: parent.width  // 自动适应滚动视图宽度
+                    implicitWidth: parent.width
                 }
             }
 
@@ -76,6 +76,7 @@ Popup {
     }
 
     Component.onCompleted: {
-        fileUtils.loadFile("docs/UserManual.html", userManual)
-   }
+        fileUtils.loadFile("docs/user_manual_" + conf.language + ".html",
+                           userManual)
+    }
 }

@@ -21,7 +21,7 @@
 17. 优化用户指南：添加操作演示动画。
 18. 屏幕自适应：不同分辨率/DPI
 19. **测试**
-20. **发布：安装程序、升级程序（Mac系统编译发布）**
+20. Mac系统编译发布
 21. 日志处理，打印隐藏
 
 
@@ -63,19 +63,23 @@
 
 1. 格式化修改过的文件
 2. 检查 HelpInfo 中的 版本号
-3. 如果更新了 UserManual.md，更新 UserManual.html
+3. 如果更新了 user_manual_zh-CN.md，更新 
+   * user_manual_zh-CN.html
+   * user_manual_zh-TW.md
+   * user_manual_zh-TW.html
+4. 如果跟新了提示，`lupdate.exe ../content -ts KinshipDiagramApp_zh-CN.ts`、`lupdate.exe ../content -ts KinshipDiagramApp_zh-TW.ts`，重新发布 `lrelease.exe KinshipDiagramApp_zh-*`。
 
 **发布流程：**
 
 1. 编译 Release 版本
-2. 替换 data 中的软件（如果更新了 UserManual.html，更新到 docs 文件夹）
+2. 替换 data 中的软件（如果更新了 user_manual、language，更新到 docs、i18n 文件夹）
 3. 修改 KinshipDiagram.nsi 中的 SOFTWARE_VERSION
 4. 生成安装包（选中文件右键，"Compile NSIS Script"）
 
 ## commit
 
-[0.16.3]
+[0.17.0]
 
-1. 添加婚姻关系标识，人员显示添加阴影效果
-1. 解决子窗口鼠标穿透问题，将新建人员、排序、关系编辑界面改为 Popup 类型
+1. 添加繁体中文支持，支持繁简切换
+1. 添加了 KD-test-cases-0.1a1.xlsm
 

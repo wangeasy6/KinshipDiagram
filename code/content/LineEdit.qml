@@ -28,7 +28,7 @@ Popup {
 
     MessageDialog {
         id: delConfirmMD
-        title: "提示："
+        title: qsTr("提示：")
         visible: false
         buttons: MessageDialog.No | MessageDialog.Yes
         property var delData
@@ -62,7 +62,7 @@ Popup {
 
         // 标题
         Text {
-            text: startPerson.name + "的"
+            text: startPerson.name + qsTr("的")
             font.pointSize: 16
             font.bold: true
             Layout.alignment: Qt.AlignHCenter
@@ -95,7 +95,7 @@ Popup {
                         id: lineTypeCombo
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 40
-                        model: startPerson.gender ? (isModernType ? ["父亲", "母亲", "妻子", "前妻", "子女"] : ["父亲", "母亲", "妻子", "妾", "子女"]) : (isModernType ? ["父亲", "母亲", "老公", "前夫", "子女"] : ["父亲", "母亲", "夫君", "前夫", "子女"])
+                        model: startPerson.gender ? (isModernType ? [qsTr("父亲"), qsTr("母亲"), qsTr("妻子"), qsTr("前妻"), qsTr("子女")] : [qsTr("父亲"), qsTr("母亲"), qsTr("妻子"), qsTr("妾"), qsTr("子女")]) : (isModernType ? [qsTr("父亲"), qsTr("母亲"), qsTr("老公"), qsTr("前夫"), qsTr("子女")] : [qsTr("父亲"), qsTr("母亲"), qsTr("夫君"), qsTr("前夫"), qsTr("子女")])
                         currentIndex: lineType
                         enabled: false
                     }
@@ -142,7 +142,7 @@ Popup {
 
                         onClicked: {
                             delConfirmMD.delData = {"pid":personId, "index":index, "lineType":lineTypeCombo.currentIndex}
-                            delConfirmMD.text = "确定删除和" + personName +"的关系？"
+                            delConfirmMD.text = qsTr("确定删除和") + personName + qsTr("的关系？")
                             delConfirmMD.visible = true
                         }
                     }
@@ -251,11 +251,11 @@ Popup {
                     model: ListModel {
                         id: typeModel
                         ListElement {
-                            text: "父亲"
+                            text: qsTr("父亲")
                             enabled: true
                         }
                         ListElement {
-                            text: "母亲"
+                            text: qsTr("母亲")
                             enabled: true
                         }
                     }
@@ -394,7 +394,7 @@ Popup {
             return
         }
 
-        var maleCharacters = ["父亲", "老公", "前夫", "夫君"]
+        var maleCharacters = [qsTr("父亲"), qsTr("老公"), qsTr("前夫"), qsTr("夫君")]
         if (maleCharacters.includes(title)) {
             for (i = 0; i < allPerson.length; i++) {
                 if (allPerson[i].gender) {

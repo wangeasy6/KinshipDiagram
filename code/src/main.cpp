@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #include <QQuickWindow>
 
 #include "app_environment.h"
@@ -21,12 +22,12 @@ int main(int argc, char* argv[])
     app.setWindowIcon(QIcon(":/Logo.png"));
     qmlRegisterType<PersonInfo>("easy.qt.Person", 0, 1, "PersonInfo");
     qmlRegisterType<PersonDB>("easy.qt.PersonDB", 0, 1, "PersonDB");
-    qmlRegisterType<Config>("easy.qt.Config", 0, 1, "Config");
     qmlRegisterType<FileUtils>("easy.qt.FileUtils", 0, 1, "FileUtils");
     qmlRegisterType<SettingsManager>("easy.qt.Settings", 0, 1, "SettingsManager");
 
+    Config conf;
+
     QQmlApplicationEngine engine;
-    // engine.rootContext()->setContextProperty("ImageOps", new ImageOps);
     const QUrl url(QStringLiteral("qrc:/qt/qml/Main/main.qml"));
     QObject::connect(
         &engine,
@@ -38,8 +39,15 @@ int main(int argc, char* argv[])
     },
     Qt::QueuedConnection);
 
+    QObject::connect(&conf, &Config::sigLanguageChanged, &engine, [&engine]() {
+        engine.retranslate();
+    });
+
     engine.addImportPath(QCoreApplication::applicationDirPath() + "/qml");
     engine.addImportPath(":/");
+
+    QQmlApplicationEngine::setObjectOwnership(&conf, QQmlApplicationEngine::CppOwnership);
+    engine.rootContext()->setContextProperty("conf", &conf);
 
     engine.load(url);
 

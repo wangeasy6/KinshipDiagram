@@ -14,14 +14,11 @@ Popup {
     closePolicy: Popup.CloseOnEscape
 
     property int currentIndex: 0
-    
-    // 使用pdb.getSettings()获取SettingsManager实例
     property var settingsManager: pdb.getSettings()
 
-    // 添加调试输出
     Component.onCompleted: {
         console.log("SettingsManager:", settingsManager)
-        console.log("Language:", settingsManager.language)
+        console.log("Language:", conf.language)
         console.log("PhotoFormat:", settingsManager.photoFormat)
         console.log("MarriageMode:", settingsManager.marriageMode)
         console.log("PhotoDisplay:", settingsManager.photoDisplay)
@@ -69,7 +66,7 @@ Popup {
                 padding: 10
 
                 Repeater {
-                    model: ["基础设置", "我要反馈"]
+                    model: [qsTr("系统设置"), qsTr("图谱设置"), qsTr("我要反馈")]
                     delegate: Button {
                         width: parent.width - 20
                         height: 50
@@ -105,41 +102,62 @@ Popup {
         }
     }
 
-    // 组件定义
+    //
     Component {
-        id: basicSettings
+        id: sysSettings
         ColumnLayout {
             anchors.fill: parent
             spacing: 20
-            enabled: settingsManager.initialized
+            enabled: conf
 
             GroupBox {
-                title: "语言设置"
+                title: qsTr("语言设置")
                 Layout.fillWidth: true
                 
                 RowLayout {
                     RadioButton {
-                        id: chineseRadio
-                        text: "简体中文"
-                        checked: settingsManager ? settingsManager.language === "zh-CN" : true
+                        id: chineseCNRadio
+                        text: qsTr("简体中文")
+                        checked: conf ? conf.language === "zh-CN" : true
                         onClicked: {
-                            settingsManager.language = "zh-CN"
+                            conf.language = "zh-CN"
+                        }
+                    }
+                    RadioButton {
+                        id: chineseTWRadio
+                        text: qsTr("繁体中文")
+                        checked: conf ? conf.language === "zh-TW" : false
+                        onClicked: {
+                            conf.language = "zh-TW"
                         }
                     }
                     RadioButton {
                         id: englishRadio
                         text: "English"
                         visible: false
-                        checked: settingsManager ? settingsManager.language === "en" : false
+                        checked: conf ? conf.language === "en" : false
                         onClicked: {
-                            settingsManager.language = "en"
+                            conf.language = "en"
                         }
                     }
                 }
             }
 
+            Item {
+                Layout.fillHeight: true
+            }
+        }
+    }
+
+    Component {
+        id: mapSettings
+        ColumnLayout {
+            anchors.fill: parent
+            spacing: 20
+            enabled: settingsManager.initialized
+
             GroupBox {
-                title: "默认裁剪保存照片格式"
+                title: qsTr("默认裁剪保存照片格式")
                 Layout.fillWidth: true
                 
                 RowLayout {
@@ -163,13 +181,13 @@ Popup {
             }
 
             GroupBox {
-                title: "婚姻关系模式"
+                title: qsTr("婚姻关系模式")
                 Layout.fillWidth: true
                 
                 RowLayout {
                     RadioButton {
                         id: modernRadio
-                        text: "现代模式（妻/前妻）"
+                        text: qsTr("现代模式（妻/前妻）")
                         checked: settingsManager ? settingsManager.marriageMode === "modern" : true
                         onClicked: {
                             settingsManager.setMarriageMode("modern")
@@ -177,7 +195,7 @@ Popup {
                     }
                     RadioButton {
                         id: ancientRadio
-                        text: "古代模式（妻/前妻/妾）"
+                        text: qsTr("古代模式（妻/前妻/妾）")
                         checked: settingsManager ? settingsManager.marriageMode === "ancient" : false
                         onClicked: {
                             settingsManager.setMarriageMode("ancient")
@@ -187,14 +205,14 @@ Popup {
             }
 
             GroupBox {
-                title: "照片显示模式"
+                title: qsTr("照片显示模式")
                 Layout.fillWidth: true
                 visible: false
                 
                 RowLayout {
                     RadioButton {
                         id: withPhotoRadio
-                        text: "有照片模式"
+                        text: qsTr("有照片模式")
                         checked: settingsManager ? settingsManager.photoDisplay === "with_photo" : true
                         onClicked: {
                             settingsManager.setPhotoDisplay("with_photo")
@@ -202,7 +220,7 @@ Popup {
                     }
                     RadioButton {
                         id: noPhotoRadio
-                        text: "无照片模式"
+                        text: qsTr("无照片模式")
                         checked: settingsManager ? settingsManager.photoDisplay === "no_photo" : false
                         onClicked: {
                             settingsManager.setPhotoDisplay("no_photo")
@@ -213,7 +231,7 @@ Popup {
             
             // 添加重置按钮
             Button {
-                text: "恢复默认设置"
+                text: qsTr("恢复默认设置")
                 Layout.alignment: Qt.AlignRight
                 onClicked: {
                     settingsManager.resetToDefaults()
@@ -236,7 +254,7 @@ Popup {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 Layout.preferredWidth: 300
                 Layout.preferredHeight: 60
-                text: "前往 GitHub 提交反馈"
+                text: qsTr("前往 GitHub 提交反馈")
                 font.pixelSize: 16
                 
                 onClicked: {
@@ -261,7 +279,8 @@ Popup {
 
     // 组件列表
     property list<Component> settingComponents: [
-        basicSettings,
+        sysSettings,
+        mapSettings,
         feedbackPage
     ]
 }

@@ -13,7 +13,7 @@ Window {
     // maximumWidth: 2560
     // maximumHeight: 1440
     visible: true
-    title: "亲戚图谱"
+    title: qsTr("亲戚图谱")
 
     MainPageForm {
         id: mainRect

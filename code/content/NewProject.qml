@@ -54,7 +54,7 @@ Rectangle {
                 FolderDialog {
                     id: selectFolder
                     visible: false
-                    title: "Select a folder"
+                    title: qsTr("选择存放路径")
 
                     onAccepted: {
                         textPath.text = folder.toString().replace("file:///",
@@ -140,16 +140,16 @@ Rectangle {
 
     function checkPath() {
         if (!textPath.text) {
-            checkError.text = "*请选择文件夹！"
+            checkError.text = qsTr("*请选择文件夹！")
             return false
         }
         if (!textName.text) {
-            checkError.text = "*请输入图谱名！"
+            checkError.text = qsTr("*请输入图谱名！")
             return false
         }
 
         if (fileUtils.isFolderExist(textPath.text + "/" + textName.text)) {
-            checkError.text = "*文件夹已存在！"
+            checkError.text = qsTr("*文件夹已存在！")
             return false
         } else {
             checkError.text = ""

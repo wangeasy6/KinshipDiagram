@@ -33,8 +33,8 @@ Switch {
 
             Text {
                 anchors.centerIn: parent
-                // text: control.checked ? "阴" : "阳"
-                text: control.checked ? "农" : "公"
+                // text: control.checked ? qsTr("阴") : qsTr("阳")
+                text: control.checked ? qsTr("农") : qsTr("公")
                 font {
                     family: "SimSun"
                     pixelSize: Math.min(parent.height*0.6, parent.width*0.6)

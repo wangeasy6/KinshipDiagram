@@ -33,9 +33,9 @@ Popup {
 
     MessageDialog {
         id: isCropMD
-        title: "提示："
+        title: qsTr("提示：")
         visible: false
-        text: "是否对照片进行裁剪？"
+        text: qsTr("是否裁剪照片？")
         buttons: MessageDialog.No | MessageDialog.Yes
 
         onAccepted: {
@@ -107,7 +107,7 @@ Popup {
             Layout.fillWidth: true
             Layout.preferredHeight: 70
             color: "#ddffffff"
-            text: startPerson ? "添加人员： " + startPerson.name + " 之 " + addType : ""
+            text: startPerson ? qsTr("添加人员： ") + startPerson.name + qsTr(" 之 ") + addType : ""
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: false
@@ -173,7 +173,7 @@ Popup {
 
                     FileDialog {
                         id: selectAvatarFileDialog
-                        title: "Select a Photo"
+                        title: qsTr("选择照片")
                         currentFile: avatar.source
                         nameFilters: [ "Image Files (*.png *.jpeg *.jpg *.bmp)" ]
 
@@ -368,14 +368,14 @@ Popup {
                                 if (isPositiveInteger(text)) {
                                     var t = parseInt(textSSAR.text)
                                     if (t <= startPerson.children.length) {
-                                        textSsarMsg.text = "可能会影响其它子女排名！"
+                                        textSsarMsg.text = qsTr("可能会影响其它子女排名！")
                                         textSsarMsg.color = "#FF8C00"
                                     }
                                     else {
                                         textSsarMsg.text = ""
                                     }
                                 } else {
-                                    textSsarMsg.text = "请输入正整数！"
+                                    textSsarMsg.text = qsTr("请输入正整数！")
                                     textSsarMsg.color = "red"
                                 }
                             }

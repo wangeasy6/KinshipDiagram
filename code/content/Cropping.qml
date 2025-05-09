@@ -29,7 +29,7 @@ Popup {
             spacing: 20
 
             Label {
-                text: "照片裁剪："
+                text: qsTr("照片裁剪：")
                 font.pointSize: 14
             }
 
@@ -48,7 +48,7 @@ Popup {
 
             FileDialog {
                 id: selectAvatarFileDialog
-                title: "Select a Photo"
+                title: qsTr("选择照片")
                 currentFile: avatar.source
                 nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp *.webp)"]
                 modality: Qt.ApplicationModal
@@ -107,7 +107,7 @@ Popup {
                 onTextChanged: {
                     var targetFile = pathPrefix + text
                     if (fileUtils.isFileExist(targetFile)) {
-                        notes.text = "将覆盖同名文件！"
+                        notes.text = qsTr("将覆盖同名文件！")
                     }
                 }
             }
@@ -178,7 +178,7 @@ Popup {
                              // console.log(wheel.x, wheel.y, avatar.x, avatar.y)
                              var scaleValue = 1.1
                              if (wheel.angleDelta.y > 0) {
-                                 // 放大
+                                 // Zoom in
                                  avatarScale.xScale *= scaleValue
                                  avatarScale.yScale *= scaleValue
 
@@ -193,7 +193,7 @@ Popup {
                                      avatar.y += (avatar.y - wheel.y) * 0.11
                                  }
                              } else {
-                                 // 缩小
+                                 // Zoom out
                                  avatarScale.xScale /= scaleValue
                                  avatarScale.yScale /= scaleValue
 
@@ -249,7 +249,7 @@ Popup {
                 display: AbstractButton.IconOnly
 
                 ToolTip {
-                    text: "逆时针旋转"
+                    text: qsTr("逆时针旋转")
                     delay: 500
                     visible: parent.hovered
                     z: 3
@@ -294,7 +294,7 @@ Popup {
                 display: AbstractButton.IconOnly
 
                 ToolTip {
-                    text: "顺时针旋转"
+                    text: qsTr("顺时针旋转")
                     delay: 500
                     visible: parent.hovered
                     z: 3
