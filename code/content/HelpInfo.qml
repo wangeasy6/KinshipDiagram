@@ -11,6 +11,12 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     visible: true
 
+    // Prevent event penetration
+    focus: true
+    Keys.onPressed: {
+        event.accepted = true
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: 10
@@ -28,7 +34,7 @@ Popup {
             }
 
             TextArea {
-                text: "* Author: **Easy Wang**\r\n* Version: **0.17.0**\r\n* Based: **QtQuick 6.2**"
+                text: "* Author: **Easy Wang**\r\n* Version: **0.17.1**\r\n* Based: **QtQuick 6.2**"
                 wrapMode: Text.Wrap
                 Layout.fillHeight: false
                 Layout.alignment: Qt.AlignHCenter
@@ -66,7 +72,7 @@ Popup {
             }
 
             Button {
-                text: "Ok"
+                text: qsTr("返回")
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
                 onClicked: {
                     thisPage.destroy()

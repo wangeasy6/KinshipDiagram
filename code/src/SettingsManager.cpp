@@ -7,7 +7,6 @@
 
 SettingsManager::SettingsManager(QObject* parent)
     : QObject(parent)
-    , m_language("zh-CN")
     , m_photoFormat(".png")
     , m_marriageMode("modern")
     , m_photoDisplay("with_photo")
@@ -16,7 +15,6 @@ SettingsManager::SettingsManager(QObject* parent)
 
 SettingsManager::SettingsManager(const SettingsManager& other)
     : QObject(other.parent())
-    , m_language(other.m_language)
     , m_photoFormat(other.m_photoFormat)
     , m_marriageMode(other.m_marriageMode)
     , m_photoDisplay(other.m_photoDisplay)
@@ -26,7 +24,6 @@ SettingsManager::SettingsManager(const SettingsManager& other)
 SettingsManager& SettingsManager::operator=(const SettingsManager& other)
 {
     if (this != &other) {
-        m_language = other.m_language;
         m_photoFormat = other.m_photoFormat;
         m_marriageMode = other.m_marriageMode;
         m_photoDisplay = other.m_photoDisplay;
@@ -36,8 +33,7 @@ SettingsManager& SettingsManager::operator=(const SettingsManager& other)
 
 bool SettingsManager::operator==(const SettingsManager& other) const
 {
-    return m_language == other.m_language &&
-           m_photoFormat == other.m_photoFormat &&
+    return m_photoFormat == other.m_photoFormat &&
            m_marriageMode == other.m_marriageMode &&
            m_photoDisplay == other.m_photoDisplay;
 }
@@ -77,7 +73,6 @@ bool SettingsManager::initSettingsTable()
     // Insert default settings
     if (!query.exec("INSERT OR IGNORE INTO user_settings (setting_key, setting_value, description) VALUES "
                     "('sql_version', '0.2.0', '数据库定义版本号'), "
-                    "('language', 'zh-CN', '语言设置：zh-CN/zh-TW/en'), "
                     "('photo_format', '.png', '默认裁剪保存照片格式：.png/.jpg'), "
                     "('marriage_mode', 'modern', '婚姻关系模式：modern(现代)/ancient(古代)'), "
                     "('photo_display', 'with_photo', '照片显示模式：with_photo/no_photo');")) {
@@ -110,10 +105,7 @@ void SettingsManager::loadSettings()
         while (query.next()) {
             QString key = query.value(0).toString();
             QString value = query.value(1).toString();
-
-            if (key == "language") {
-                m_language = value;
-            } else if (key == "photo_format") {
+if (key == "photo_format") {
                 m_photoFormat = value;
             } else if (key == "marriage_mode") {
                 m_marriageMode = value;
@@ -153,11 +145,6 @@ bool SettingsManager::isInitialized() const
     return m_initialized;
 }
 
-QString SettingsManager::language() const
-{
-    return m_language;
-}
-
 QString SettingsManager::photoFormat() const
 {
     return m_photoFormat;
@@ -189,17 +176,6 @@ QVariant SettingsManager::getSetting(const QString& key, const QVariant& default
     }
 
     return defaultValue;
-}
-
-void SettingsManager::setLanguage(const QString& language)
-{
-    if (m_language != language) {
-        if (updateSetting("language", language)) {
-            m_language = language;
-            emit languageChanged();
-            emit settingChanged("language", language);
-        }
-    }
 }
 
 void SettingsManager::setPhotoFormat(const QString& format)
@@ -249,10 +225,7 @@ bool SettingsManager::setSetting(const QString& key, const QVariant& value)
 
     if (result) {
         // Update cached values
-        if (key == "language") {
-            m_language = value.toString();
-            emit languageChanged();
-        } else if (key == "photo_format") {
+        if (key == "photo_format") {
             m_photoFormat = value.toString();
             emit photoFormatChanged();
         } else if (key == "marriage_mode") {
@@ -280,7 +253,6 @@ bool SettingsManager::resetToDefaults()
 
     // Reset to default values
     if (!query.exec("UPDATE user_settings SET setting_value = CASE "
-                    "WHEN setting_key = 'language' THEN 'zh-CN' "
                     "WHEN setting_key = 'photo_format' THEN '.png' "
                     "WHEN setting_key = 'marriage_mode' THEN 'modern' "
                     "WHEN setting_key = 'photo_display' THEN 'with_photo' "
@@ -293,7 +265,6 @@ bool SettingsManager::resetToDefaults()
     loadSettings();
 
     // Emit all signals
-    emit languageChanged();
     emit photoFormatChanged();
     emit marriageModeChanged();
     emit photoDisplayChanged();

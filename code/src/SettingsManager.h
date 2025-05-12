@@ -13,7 +13,6 @@ class SettingsManager : public QObject
     // 定义属性，可以在QML中直接绑定
     // 初始化标识
     Q_PROPERTY(bool initialized READ isInitialized WRITE setInitialized NOTIFY initializedChanged)
-    Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY languageChanged)
     Q_PROPERTY(QString photoFormat READ photoFormat WRITE setPhotoFormat NOTIFY photoFormatChanged)
     Q_PROPERTY(QString marriageMode READ marriageMode WRITE setMarriageMode NOTIFY marriageModeChanged)
     Q_PROPERTY(QString photoDisplay READ photoDisplay WRITE setPhotoDisplay NOTIFY photoDisplayChanged)
@@ -41,7 +40,6 @@ public:
 
     // 获取设置值
     Q_INVOKABLE bool isInitialized() const;
-    Q_INVOKABLE QString language() const;
     Q_INVOKABLE QString photoFormat() const;
     Q_INVOKABLE QString marriageMode() const;
     Q_INVOKABLE QString photoDisplay() const;
@@ -52,7 +50,6 @@ public:
 
 public slots:
     // 设置值的方法
-    Q_INVOKABLE void setLanguage(const QString& language);
     Q_INVOKABLE void setPhotoFormat(const QString& format);
     Q_INVOKABLE void setMarriageMode(const QString& mode);
     Q_INVOKABLE void setPhotoDisplay(const QString& display);
@@ -67,7 +64,6 @@ public slots:
 signals:
     // 属性变化信号
     void initializedChanged();
-    void languageChanged();
     void photoFormatChanged();
     void marriageModeChanged();
     void photoDisplayChanged();
@@ -80,7 +76,6 @@ private:
     bool m_initialized = false;
 
     // 缓存的设置值
-    QString m_language;
     QString m_photoFormat;
     QString m_marriageMode;
     QString m_photoDisplay;

@@ -4,137 +4,145 @@
 <context>
     <name>AddPerson</name>
     <message>
-        <location filename="../content/AddPerson.qml" line="36"/>
+        <location filename="../content/AddPerson.qml" line="41"/>
+        <location filename="../content/AddPerson.qml" line="50"/>
         <source>提示：</source>
         <translation>提示：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="38"/>
+        <location filename="../content/AddPerson.qml" line="52"/>
         <source>是否裁剪照片？</source>
         <translation>是否裁剪照片？</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="110"/>
+        <location filename="../content/AddPerson.qml" line="128"/>
         <source>添加人员： </source>
         <translation>添加人員： </translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="110"/>
+        <location filename="../content/AddPerson.qml" line="128"/>
         <source> 之 </source>
         <translation> 之 </translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="176"/>
+        <location filename="../content/AddPerson.qml" line="196"/>
+        <location filename="../content/AddPerson.qml" line="214"/>
         <source>选择照片</source>
         <translation>選擇照片</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="217"/>
+        <location filename="../content/AddPerson.qml" line="222"/>
+        <location filename="../content/AddPerson.qml" line="538"/>
+        <source>请先填写人员姓名！</source>
+        <translation>請先填寫人員姓名！</translation>
+    </message>
+    <message>
+        <location filename="../content/AddPerson.qml" line="245"/>
         <source>姓名：</source>
         <translation>姓名：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="229"/>
+        <location filename="../content/AddPerson.qml" line="257"/>
         <source>性别：</source>
         <translation>性别：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="240"/>
+        <location filename="../content/AddPerson.qml" line="268"/>
         <source>女</source>
         <translation>女</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="240"/>
+        <location filename="../content/AddPerson.qml" line="268"/>
         <source>男</source>
         <translation>男</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="245"/>
+        <location filename="../content/AddPerson.qml" line="273"/>
         <source>已故：</source>
         <translation>已故：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="257"/>
+        <location filename="../content/AddPerson.qml" line="285"/>
         <source>是</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="257"/>
+        <location filename="../content/AddPerson.qml" line="285"/>
         <source>否</source>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="264"/>
+        <location filename="../content/AddPerson.qml" line="292"/>
         <source>称呼：</source>
         <translation>稱呼：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="283"/>
+        <location filename="../content/AddPerson.qml" line="311"/>
         <source>计算</source>
         <translation>計算</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="296"/>
+        <location filename="../content/AddPerson.qml" line="324"/>
         <source>关联：</source>
         <translation>關聯：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="344"/>
+        <location filename="../content/AddPerson.qml" line="372"/>
         <source>夫</source>
         <translation>夫</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="344"/>
+        <location filename="../content/AddPerson.qml" line="372"/>
         <source>妻</source>
         <translation>妻</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="344"/>
+        <location filename="../content/AddPerson.qml" line="372"/>
         <source>前夫</source>
         <translation>前夫</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="344"/>
+        <location filename="../content/AddPerson.qml" line="372"/>
         <source>前妻</source>
         <translation>前妻</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="354"/>
+        <location filename="../content/AddPerson.qml" line="382"/>
         <source>家中排行：</source>
         <translation>家中排行：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="371"/>
+        <location filename="../content/AddPerson.qml" line="399"/>
         <source>可能会影响其它子女排名！</source>
         <translation>可能會影響其它子女排名！</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="378"/>
+        <location filename="../content/AddPerson.qml" line="405"/>
         <source>请输入正整数！</source>
         <translation>請輸入正整數！</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="395"/>
+        <location filename="../content/AddPerson.qml" line="422"/>
         <source>生日：</source>
         <translation>生日：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="420"/>
+        <location filename="../content/AddPerson.qml" line="447"/>
         <source>忌日：</source>
         <translation>忌日：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="447"/>
+        <location filename="../content/AddPerson.qml" line="474"/>
         <source>备注：</source>
         <translation>備註：</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="478"/>
+        <location filename="../content/AddPerson.qml" line="504"/>
         <source>取消</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../content/AddPerson.qml" line="500"/>
+        <location filename="../content/AddPerson.qml" line="526"/>
         <source>保存</source>
         <translation>保存</translation>
     </message>
@@ -142,102 +150,110 @@
 <context>
     <name>AddProtagonist</name>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="30"/>
+        <location filename="../content/AddProtagonist.qml" line="35"/>
+        <location filename="../content/AddProtagonist.qml" line="44"/>
         <source>提示：</source>
         <translation>提示：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="32"/>
+        <location filename="../content/AddProtagonist.qml" line="46"/>
         <source>是否裁剪照片？</source>
         <translation>是否裁剪照片？</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="106"/>
+        <location filename="../content/AddProtagonist.qml" line="124"/>
         <source>添加人员：主人公</source>
         <translation>添加人員：主人公</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="173"/>
+        <location filename="../content/AddProtagonist.qml" line="192"/>
+        <location filename="../content/AddProtagonist.qml" line="213"/>
         <source>选择照片</source>
         <translation>選擇照片</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="217"/>
+        <location filename="../content/AddProtagonist.qml" line="221"/>
+        <location filename="../content/AddProtagonist.qml" line="468"/>
+        <source>请先填写人员姓名！</source>
+        <translation>請先填寫人員姓名！</translation>
+    </message>
+    <message>
+        <location filename="../content/AddProtagonist.qml" line="244"/>
         <source>姓名：</source>
         <translation>姓名：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="229"/>
+        <location filename="../content/AddProtagonist.qml" line="256"/>
         <source>性别：</source>
         <translation>性别：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="239"/>
+        <location filename="../content/AddProtagonist.qml" line="266"/>
         <source>女</source>
         <translation>女</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="239"/>
+        <location filename="../content/AddProtagonist.qml" line="266"/>
         <source>男</source>
         <translation>男</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="244"/>
+        <location filename="../content/AddProtagonist.qml" line="271"/>
         <source>已故：</source>
         <translation>已故：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="256"/>
+        <location filename="../content/AddProtagonist.qml" line="283"/>
         <source>是</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="256"/>
+        <location filename="../content/AddProtagonist.qml" line="283"/>
         <source>否</source>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="263"/>
+        <location filename="../content/AddProtagonist.qml" line="290"/>
         <source>称呼：</source>
         <translation>稱呼：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="282"/>
+        <location filename="../content/AddProtagonist.qml" line="309"/>
         <source>计算</source>
         <translation>計算</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="295"/>
+        <location filename="../content/AddProtagonist.qml" line="322"/>
         <source>家中排行：</source>
         <translation>家中排行：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="310"/>
+        <location filename="../content/AddProtagonist.qml" line="337"/>
         <source>请输入正整数！</source>
         <translation>請輸入正整數！</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="326"/>
+        <location filename="../content/AddProtagonist.qml" line="353"/>
         <source>生日：</source>
         <translation>生日：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="351"/>
+        <location filename="../content/AddProtagonist.qml" line="378"/>
         <source>忌日：</source>
         <translation>忌日：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="378"/>
+        <location filename="../content/AddProtagonist.qml" line="405"/>
         <source>备注：</source>
         <translation>備註：</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="409"/>
+        <location filename="../content/AddProtagonist.qml" line="435"/>
         <source>取消</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../content/AddProtagonist.qml" line="431"/>
+        <location filename="../content/AddProtagonist.qml" line="457"/>
         <source>保存</source>
         <translation>保存</translation>
     </message>
@@ -253,43 +269,43 @@
 <context>
     <name>ChildrenSorting</name>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="33"/>
+        <location filename="../content/ChildrenSorting.qml" line="42"/>
         <source>提示：</source>
         <translation>提示：</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="34"/>
+        <location filename="../content/ChildrenSorting.qml" line="43"/>
         <source>放弃修改？</source>
         <translation>放弃修改？</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="56"/>
+        <location filename="../content/ChildrenSorting.qml" line="65"/>
         <source>父排行</source>
         <translation>父排行</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="175"/>
+        <location filename="../content/ChildrenSorting.qml" line="184"/>
         <source>母排行</source>
         <translation>母排行</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="296"/>
+        <location filename="../content/ChildrenSorting.qml" line="305"/>
         <source>取消</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="324"/>
-        <location filename="../content/ChildrenSorting.qml" line="339"/>
+        <location filename="../content/ChildrenSorting.qml" line="333"/>
+        <location filename="../content/ChildrenSorting.qml" line="348"/>
         <source>保存</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="337"/>
+        <location filename="../content/ChildrenSorting.qml" line="346"/>
         <source>保存&lt;font color=&apos;red&apos;&gt;⚹&lt;/font&gt;</source>
         <translation>保存&lt;font color=&apos;red&apos;&gt;⚹&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../content/ChildrenSorting.qml" line="385"/>
+        <location filename="../content/ChildrenSorting.qml" line="395"/>
         <source>排名</source>
         <translation>排名</translation>
     </message>
@@ -297,42 +313,42 @@
 <context>
     <name>Cropping</name>
     <message>
-        <location filename="../content/Cropping.qml" line="32"/>
+        <location filename="../content/Cropping.qml" line="41"/>
         <source>照片裁剪：</source>
         <translation>照片裁剪：</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="51"/>
+        <location filename="../content/Cropping.qml" line="60"/>
         <source>选择照片</source>
         <translation>選擇照片</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="95"/>
+        <location filename="../content/Cropping.qml" line="104"/>
         <source>重命名：</source>
         <translation>重命名：</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="110"/>
+        <location filename="../content/Cropping.qml" line="119"/>
         <source>将覆盖同名文件！</source>
         <translation>將覆蓋同名檔案！</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="252"/>
+        <location filename="../content/Cropping.qml" line="261"/>
         <source>逆时针旋转</source>
         <translation>逆時針旋轉</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="297"/>
+        <location filename="../content/Cropping.qml" line="306"/>
         <source>顺时针旋转</source>
         <translation>順時針旋轉</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="318"/>
+        <location filename="../content/Cropping.qml" line="327"/>
         <source>取消</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../content/Cropping.qml" line="335"/>
+        <location filename="../content/Cropping.qml" line="344"/>
         <source>确定</source>
         <translation>確定</translation>
     </message>
@@ -340,324 +356,374 @@
 <context>
     <name>HelpInfo</name>
     <message>
-        <location filename="../content/HelpInfo.qml" line="23"/>
+        <location filename="../content/HelpInfo.qml" line="29"/>
         <source>软件信息</source>
         <translation>軟件資訊</translation>
     </message>
     <message>
-        <location filename="../content/HelpInfo.qml" line="41"/>
+        <location filename="../content/HelpInfo.qml" line="47"/>
         <source>用户指南</source>
         <translation>使用者指南</translation>
+    </message>
+    <message>
+        <location filename="../content/HelpInfo.qml" line="75"/>
+        <source>返回</source>
+        <translation>返回</translation>
     </message>
 </context>
 <context>
     <name>LineEdit</name>
     <message>
-        <location filename="../content/LineEdit.qml" line="31"/>
+        <location filename="../content/LineEdit.qml" line="39"/>
         <source>提示：</source>
         <translation>提示：</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="65"/>
+        <location filename="../content/LineEdit.qml" line="73"/>
         <source>的</source>
         <translation>的</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
-        <location filename="../content/LineEdit.qml" line="254"/>
-        <location filename="../content/LineEdit.qml" line="397"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
+        <location filename="../content/LineEdit.qml" line="277"/>
+        <location filename="../content/LineEdit.qml" line="423"/>
         <source>父亲</source>
         <translation>父親</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
-        <location filename="../content/LineEdit.qml" line="258"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
+        <location filename="../content/LineEdit.qml" line="281"/>
         <source>母亲</source>
         <translation>母親</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
         <source>妻子</source>
         <translation>妻子</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
         <source>前妻</source>
         <translation>前妻</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
         <source>子女</source>
         <translation>子女</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
         <source>妾</source>
         <translation>妾</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
-        <location filename="../content/LineEdit.qml" line="397"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
+        <location filename="../content/LineEdit.qml" line="423"/>
         <source>老公</source>
         <translation>老公</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
-        <location filename="../content/LineEdit.qml" line="397"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
+        <location filename="../content/LineEdit.qml" line="423"/>
         <source>前夫</source>
         <translation>前夫</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="98"/>
-        <location filename="../content/LineEdit.qml" line="397"/>
+        <location filename="../content/LineEdit.qml" line="106"/>
+        <location filename="../content/LineEdit.qml" line="423"/>
         <source>夫君</source>
         <translation>夫君</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="145"/>
+        <location filename="../content/LineEdit.qml" line="136"/>
+        <source>删除</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="../content/LineEdit.qml" line="158"/>
         <source>确定删除和</source>
         <translation>確定删除和</translation>
     </message>
     <message>
-        <location filename="../content/LineEdit.qml" line="145"/>
+        <location filename="../content/LineEdit.qml" line="158"/>
         <source>的关系？</source>
         <translation>的關係？</translation>
+    </message>
+    <message>
+        <location filename="../content/LineEdit.qml" line="179"/>
+        <source>上调</source>
+        <translation>上調</translation>
+    </message>
+    <message>
+        <location filename="../content/LineEdit.qml" line="222"/>
+        <source>下调</source>
+        <translation>下調</translation>
     </message>
 </context>
 <context>
     <name>MainPageForm</name>
     <message>
-        <location filename="../content/MainPageForm.qml" line="55"/>
-        <location filename="../content/MainPageForm.qml" line="64"/>
-        <location filename="../content/MainPageForm.qml" line="111"/>
-        <location filename="../content/MainPageForm.qml" line="148"/>
-        <location filename="../content/MainPageForm.qml" line="162"/>
+        <location filename="../content/MainPageForm.qml" line="50"/>
+        <location filename="../content/MainPageForm.qml" line="59"/>
+        <location filename="../content/MainPageForm.qml" line="113"/>
+        <location filename="../content/MainPageForm.qml" line="150"/>
+        <location filename="../content/MainPageForm.qml" line="164"/>
         <source>提示：</source>
         <translation>提示：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="66"/>
+        <location filename="../content/MainPageForm.qml" line="61"/>
         <source>是否裁剪照片？</source>
         <translation>是否裁剪照片？</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="163"/>
+        <location filename="../content/MainPageForm.qml" line="165"/>
         <source>放弃修改？</source>
         <translation>放弃修改？</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="214"/>
-        <location filename="../content/MainPageForm.qml" line="1211"/>
+        <location filename="../content/MainPageForm.qml" line="224"/>
+        <location filename="../content/MainPageForm.qml" line="1303"/>
         <source>妻</source>
         <translation>妻</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="214"/>
-        <location filename="../content/MainPageForm.qml" line="1211"/>
+        <location filename="../content/MainPageForm.qml" line="224"/>
+        <location filename="../content/MainPageForm.qml" line="1302"/>
+        <location filename="../content/MainPageForm.qml" line="1304"/>
         <source>夫</source>
         <translation>夫</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="301"/>
+        <location filename="../content/MainPageForm.qml" line="317"/>
         <source>人员搜索:</source>
         <translation>人員蒐索:</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="301"/>
+        <location filename="../content/MainPageForm.qml" line="317"/>
         <source>路径搜索:</source>
         <translation>路徑蒐索:</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="444"/>
+        <location filename="../content/MainPageForm.qml" line="471"/>
         <source>从</source>
         <translation>從</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="461"/>
-        <location filename="../content/MainPageForm.qml" line="540"/>
+        <location filename="../content/MainPageForm.qml" line="489"/>
+        <location filename="../content/MainPageForm.qml" line="503"/>
+        <location filename="../content/MainPageForm.qml" line="589"/>
+        <location filename="../content/MainPageForm.qml" line="602"/>
         <source>主人公</source>
         <translation>主人公</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="524"/>
+        <location filename="../content/MainPageForm.qml" line="572"/>
         <source>到</source>
         <translation>到</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="761"/>
-        <location filename="../content/MainPageForm.qml" line="793"/>
+        <location filename="../content/MainPageForm.qml" line="881"/>
         <source>请先填写人员姓名！</source>
         <translation>請先填寫人員姓名！</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="811"/>
+        <location filename="../content/MainPageForm.qml" line="851"/>
+        <location filename="../content/MainPageForm.qml" line="873"/>
         <source>选择照片</source>
         <translation>選擇照片</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="830"/>
+        <location filename="../content/MainPageForm.qml" line="279"/>
+        <source>设置</source>
+        <translation>設定</translation>
+    </message>
+    <message>
+        <location filename="../content/MainPageForm.qml" line="299"/>
+        <source>帮助</source>
+        <translation>幫助</translation>
+    </message>
+    <message>
+        <location filename="../content/MainPageForm.qml" line="450"/>
+        <location filename="../content/MainPageForm.qml" line="679"/>
+        <source>搜索</source>
+        <translation>蒐索</translation>
+    </message>
+    <message>
+        <location filename="../content/MainPageForm.qml" line="899"/>
         <source>姓名：</source>
         <translation>姓名：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="859"/>
+        <location filename="../content/MainPageForm.qml" line="928"/>
         <source>修改排名</source>
         <translation>修改排名</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="895"/>
+        <location filename="../content/MainPageForm.qml" line="964"/>
         <source>子女排序需要先添加父母！</source>
         <translation>子女排序需要先添加父母！</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="906"/>
+        <location filename="../content/MainPageForm.qml" line="975"/>
         <source>称呼：</source>
         <translation>稱呼：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="939"/>
+        <location filename="../content/MainPageForm.qml" line="1008"/>
         <source>计算</source>
         <translation>計算</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="951"/>
+        <location filename="../content/MainPageForm.qml" line="1020"/>
         <source>临时关系：</source>
         <translation>臨時關係：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="965"/>
+        <location filename="../content/MainPageForm.qml" line="1034"/>
         <source>生日：</source>
         <translation>生日：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1011"/>
+        <location filename="../content/MainPageForm.qml" line="1080"/>
         <source>已故：</source>
         <translation>已故：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1019"/>
+        <location filename="../content/MainPageForm.qml" line="1088"/>
         <source>是</source>
         <translation>是</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1019"/>
+        <location filename="../content/MainPageForm.qml" line="1088"/>
         <source>否</source>
         <translation>否</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1035"/>
+        <location filename="../content/MainPageForm.qml" line="1104"/>
         <source>忌日：</source>
         <translation>忌日：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1083"/>
+        <location filename="../content/MainPageForm.qml" line="1152"/>
         <source>备注：</source>
         <translation>備註：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1122"/>
-        <location filename="../content/MainPageForm.qml" line="1690"/>
+        <location filename="../content/MainPageForm.qml" line="1191"/>
+        <location filename="../content/MainPageForm.qml" line="1798"/>
         <source>保存</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1187"/>
+        <location filename="../content/MainPageForm.qml" line="1203"/>
+        <source>姓名不能为空！请填写！</source>
+        <translation>姓名不能為空！ 請填寫！</translation>
+    </message>
+    <message>
+        <location filename="../content/MainPageForm.qml" line="1278"/>
         <source>父</source>
         <translation>父</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1199"/>
+        <location filename="../content/MainPageForm.qml" line="1290"/>
         <source>母</source>
         <translation>母</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1224"/>
+        <location filename="../content/MainPageForm.qml" line="1318"/>
         <source>前妻</source>
         <translation>前妻</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1224"/>
+        <location filename="../content/MainPageForm.qml" line="1318"/>
         <source>前妻/妾</source>
         <translation>前妻/妾</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1224"/>
+        <location filename="../content/MainPageForm.qml" line="1318"/>
+        <location filename="../content/MainPageForm.qml" line="1319"/>
         <source>前夫</source>
         <translation>前夫</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1286"/>
+        <location filename="../content/MainPageForm.qml" line="1382"/>
         <source>回到初始页</source>
         <translation>回到初始頁</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1309"/>
+        <location filename="../content/MainPageForm.qml" line="1405"/>
         <source>刷新当前页</source>
         <translation>重繪當前頁</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1330"/>
+        <location filename="../content/MainPageForm.qml" line="1426"/>
         <source>上一页</source>
         <translation>上一頁</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1359"/>
+        <location filename="../content/MainPageForm.qml" line="1455"/>
         <source>添加人员</source>
         <translation>添加人員</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1386"/>
+        <location filename="../content/MainPageForm.qml" line="1482"/>
         <source>删除人员</source>
         <translation>删除人員</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1411"/>
+        <location filename="../content/MainPageForm.qml" line="1489"/>
+        <source>确定删除：</source>
+        <translation>確定删除：</translation>
+    </message>
+    <message>
+        <location filename="../content/MainPageForm.qml" line="1508"/>
         <source>编辑关系</source>
         <translation>編輯關係</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1438"/>
+        <location filename="../content/MainPageForm.qml" line="1535"/>
         <source>设为主角</source>
         <translation>設為主角</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1444"/>
+        <location filename="../content/MainPageForm.qml" line="1541"/>
         <source>确定设置：</source>
         <translation>確定設定：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1444"/>
+        <location filename="../content/MainPageForm.qml" line="1542"/>
         <source> 为主角？</source>
         <translation> 為主角？</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1459"/>
+        <location filename="../content/MainPageForm.qml" line="1558"/>
         <source>打开/新建</source>
         <translation>打開/新建</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1480"/>
+        <location filename="../content/MainPageForm.qml" line="1579"/>
         <source>导出图片</source>
         <translation>匯出圖片</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1486"/>
+        <location filename="../content/MainPageForm.qml" line="1585"/>
         <source>保存为：</source>
         <translation>保存為：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1611"/>
+        <location filename="../content/MainPageForm.qml" line="1719"/>
         <source>我就是我，不一样的烟火！</source>
         <translation>我就是我，不一樣的烟火！</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1622"/>
-        <location filename="../content/MainPageForm.qml" line="1633"/>
+        <location filename="../content/MainPageForm.qml" line="1730"/>
+        <location filename="../content/MainPageForm.qml" line="1741"/>
         <source>谱中未录其人：</source>
         <translation>譜中未錄其人：</translation>
     </message>
     <message>
-        <location filename="../content/MainPageForm.qml" line="1688"/>
+        <location filename="../content/MainPageForm.qml" line="1796"/>
         <source>保存&lt;font color=&apos;red&apos;&gt;⚹&lt;/font&gt;</source>
         <translation>保存&lt;font color=&apos;red&apos;&gt;⚹&lt;/font&gt;</translation>
     </message>
@@ -665,44 +731,80 @@
 <context>
     <name>NewProject</name>
     <message>
-        <location filename="../content/NewProject.qml" line="40"/>
         <source>路径：</source>
-        <translation>路徑：</translation>
+        <translation type="vanished">路徑：</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="57"/>
+        <location filename="../content/NewProject.qml" line="74"/>
         <source>选择存放路径</source>
         <translation>選擇存放路徑</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="79"/>
         <source>族谱名：</source>
-        <translation>族譜名：</translation>
+        <translation type="vanished">族譜名：</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="109"/>
+        <location filename="../content/NewProject.qml" line="53"/>
+        <source> 路径：</source>
+        <translation> 路徑：</translation>
+    </message>
+    <message>
+        <location filename="../content/NewProject.qml" line="87"/>
+        <source>路径选择</source>
+        <translation>路徑選擇</translation>
+    </message>
+    <message>
+        <location filename="../content/NewProject.qml" line="98"/>
+        <source> 族谱名：</source>
+        <translation> 族譜名：</translation>
+    </message>
+    <message>
+        <location filename="../content/NewProject.qml" line="128"/>
         <source>取消</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="123"/>
+        <location filename="../content/NewProject.qml" line="142"/>
         <source>确定</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="143"/>
+        <location filename="../content/NewProject.qml" line="164"/>
         <source>*请选择文件夹！</source>
         <translation>*請選擇資料夾！</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="147"/>
+        <location filename="../content/NewProject.qml" line="168"/>
+        <source>*路径不存在！</source>
+        <translation>*路徑不存在！</translation>
+    </message>
+    <message>
+        <location filename="../content/NewProject.qml" line="174"/>
         <source>*请输入图谱名！</source>
         <translation>*請輸入圖譜名！</translation>
     </message>
     <message>
-        <location filename="../content/NewProject.qml" line="152"/>
+        <location filename="../content/NewProject.qml" line="179"/>
         <source>*文件夹已存在！</source>
         <translation>*資料夾已存在！</translation>
+    </message>
+</context>
+<context>
+    <name>PersonDB</name>
+    <message>
+        <location filename="../src/PersonDB.cpp" line="588"/>
+        <source>主人公仅在最后可删除!</source>
+        <translation>主人公僅在最後可删除！</translation>
+    </message>
+    <message>
+        <location filename="../src/PersonDB.cpp" line="596"/>
+        <location filename="../src/PersonDB.cpp" line="601"/>
+        <location filename="../src/PersonDB.cpp" line="607"/>
+        <location filename="../src/PersonDB.cpp" line="614"/>
+        <source>可能造成人员无法显示，<byte value="xd"/>
+请先删除: </source>
+        <translation>可能造成人員無法顯示，
+請先删除： </translation>
     </message>
 </context>
 <context>
@@ -712,77 +814,82 @@
         <translation type="vanished">基礎設定</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="69"/>
+        <location filename="../content/Settings.qml" line="51"/>
+        <source>返回</source>
+        <translation>返回</translation>
+    </message>
+    <message>
+        <location filename="../content/Settings.qml" line="81"/>
         <source>我要反馈</source>
         <translation>我要迴響</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="69"/>
+        <location filename="../content/Settings.qml" line="81"/>
         <source>系统设置</source>
         <translation>系統設置</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="69"/>
+        <location filename="../content/Settings.qml" line="81"/>
         <source>图谱设置</source>
         <translation>圖譜設定</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="114"/>
+        <location filename="../content/Settings.qml" line="126"/>
         <source>语言设置</source>
         <translation>語言設定</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="120"/>
+        <location filename="../content/Settings.qml" line="132"/>
         <source>简体中文</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="128"/>
+        <location filename="../content/Settings.qml" line="140"/>
         <source>繁体中文</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="156"/>
+        <location filename="../content/Settings.qml" line="172"/>
         <source>默认裁剪保存照片格式</source>
         <translation>默認裁剪保存照片格式</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="180"/>
+        <location filename="../content/Settings.qml" line="196"/>
         <source>婚姻关系模式</source>
         <translation>婚姻關係模式</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="186"/>
+        <location filename="../content/Settings.qml" line="202"/>
         <source>现代模式（妻/前妻）</source>
         <translation>現代模式（妻/前妻）</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="194"/>
+        <location filename="../content/Settings.qml" line="210"/>
         <source>古代模式（妻/前妻/妾）</source>
         <translation>古代模式（妻/前妻/妾）</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="204"/>
+        <location filename="../content/Settings.qml" line="220"/>
         <source>照片显示模式</source>
         <translation>照片顯示模式</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="211"/>
+        <location filename="../content/Settings.qml" line="227"/>
         <source>有照片模式</source>
         <translation>有照片模式</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="219"/>
+        <location filename="../content/Settings.qml" line="235"/>
         <source>无照片模式</source>
         <translation>無照片模式</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="230"/>
+        <location filename="../content/Settings.qml" line="246"/>
         <source>恢复默认设置</source>
         <translation>恢復默認設置</translation>
     </message>
     <message>
-        <location filename="../content/Settings.qml" line="253"/>
+        <location filename="../content/Settings.qml" line="269"/>
         <source>前往 GitHub 提交反馈</source>
         <translation>前往 GitHub 提交迴響</translation>
     </message>
@@ -790,27 +897,41 @@
 <context>
     <name>StartProject</name>
     <message>
-        <location filename="../content/StartProject.qml" line="57"/>
+        <location filename="../content/StartProject.qml" line="66"/>
         <source>新建图谱</source>
         <translation>新建圖譜</translation>
     </message>
     <message>
-        <location filename="../content/StartProject.qml" line="71"/>
         <source>选择照片</source>
-        <translation>選擇照片</translation>
+        <translation type="vanished">選擇照片</translation>
     </message>
     <message>
-        <location filename="../content/StartProject.qml" line="88"/>
+        <location filename="../content/StartProject.qml" line="39"/>
+        <source>提示：</source>
+        <translation>提示：</translation>
+    </message>
+    <message>
+        <location filename="../content/StartProject.qml" line="80"/>
+        <source>选择图谱</source>
+        <translation>選擇圖譜</translation>
+    </message>
+    <message>
+        <location filename="../content/StartProject.qml" line="92"/>
+        <source>所选图谱不可用！</source>
+        <translation>所選圖譜不可用！</translation>
+    </message>
+    <message>
+        <location filename="../content/StartProject.qml" line="99"/>
         <source>打开图谱</source>
         <translation>打開圖譜</translation>
     </message>
     <message>
-        <location filename="../content/StartProject.qml" line="113"/>
+        <location filename="../content/StartProject.qml" line="124"/>
         <source>暂无历史打开！</source>
         <translation>暫無歷史打開！</translation>
     </message>
     <message>
-        <location filename="../content/StartProject.qml" line="113"/>
+        <location filename="../content/StartProject.qml" line="124"/>
         <source>历史打开：</source>
         <translation>歷史打開：</translation>
     </message>

@@ -7,7 +7,7 @@ import easy.qt.FileUtils 0.1
 Popup {
     id: thisPage
     modal: true
-    visible : true
+    visible: true
     width: 1000
     height: 750
     padding: 0
@@ -19,16 +19,30 @@ Popup {
     property var addType
     property var autoConnectList: []
     property var tempImages: new Set()
-    signal beforeSave()
-    signal finished(bool updateFlag)
+    signal beforeSave
+    signal finished(string newP, string startP)
+
+    // Prevent event penetration
+    focus: true
+    MouseArea {
+        anchors.fill: parent
+        Keys.onPressed: {
+            event.accepted = true
+        }
+    }
 
     background: Rectangle {
         color: "#E5E5E5"
         radius: 10
     }
 
-    MouseArea {
-        anchors.fill: parent
+    MessageDialog {
+        id: errorMD
+        title: qsTr("提示：")
+        visible: false
+        onAccepted: {
+            errorMD.visible = false
+        }
     }
 
     MessageDialog {
@@ -48,7 +62,8 @@ Popup {
                 cropForm.rename = filePath.substring(lastSlashIndex + 1)
             else {
                 if (textName.text)
-                    cropForm.rename = textName.text + pdb.getSettings().photoFormat
+                    cropForm.rename = textName.text + pdb.getSettings(
+                                ).photoFormat
                 else
                     cropForm.rename = filePath.substring(lastSlashIndex + 1)
             }
@@ -57,26 +72,29 @@ Popup {
 
         onRejected: {
             isCropMD.visible = false
-            console.log("Rename check")
             var filePath = selectAvatarFileDialog.file.toString()
             var lastSlashIndex = filePath.lastIndexOf("/")
-            var selectPrefix
-            var selectSuffix
             if (lastSlashIndex !== -1) {
-                selectPrefix = filePath.substring(0, lastSlashIndex + 1)
-                console.log("selectPrefix:", selectPrefix)
+                var selectPrefix = filePath.substring(0, lastSlashIndex + 1)
                 if (selectPrefix.includes(conf.dbPrefix)) {
-                    console.log("In store.")
                     avatar.source = selectAvatarFileDialog.file
                 } else {
                     // Copy file to store
                     lastSlashIndex = filePath.lastIndexOf(".")
-                    selectSuffix = filePath.substring(lastSlashIndex)
-                    var saveTo = conf.dbPrefix + textName.text + selectSuffix
-                    console.log("Save to: ", saveTo)
-                    tempImages.add(saveTo)
-                    if (fileUtils.copyFileOverlay(filePath, saveTo))
+                    var selectSuffix = filePath.substring(lastSlashIndex)
+                    var saveTo = conf.dbPrefix + textName.text.trim(
+                                ) + selectSuffix
+                    var i = 1
+                    while (fileUtils.isFileExist(saveTo)) {
+                        saveTo = conf.dbPrefix + textName.text.trim(
+                                    ) + i.toString() + selectSuffix
+                        i++
+                    }
+
+                    if (fileUtils.copyFile(filePath, saveTo)) {
+                        tempImages.add(saveTo)
                         avatar.source = saveTo
+                    }
                 }
             }
         }
@@ -89,12 +107,12 @@ Popup {
         pathPrefix: conf.dbPrefix
         z: 2
 
-        onSaved: (path) => {
-            console.log("Get path:", path)
-            tempImages.add(path)
-            avatar.source = path
-            avatar.update()
-        }
+        onSaved: path => {
+                     console.log("Get path:", path)
+                     tempImages.add(path)
+                     avatar.source = path
+                     avatar.update()
+                 }
     }
 
     ColumnLayout {
@@ -107,7 +125,8 @@ Popup {
             Layout.fillWidth: true
             Layout.preferredHeight: 70
             color: "#ddffffff"
-            text: startPerson ? qsTr("添加人员： ") + startPerson.name + qsTr(" 之 ") + addType : ""
+            text: startPerson ? qsTr("添加人员： ") + startPerson.name + qsTr(
+                                    " 之 ") + addType : ""
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: false
@@ -169,16 +188,18 @@ Popup {
                         text: avatar.source
                         verticalAlignment: Text.AlignVCenter
                         font.pointSize: 10
+                        readOnly: true
                     }
 
                     FileDialog {
                         id: selectAvatarFileDialog
                         title: qsTr("选择照片")
                         currentFile: avatar.source
-                        nameFilters: [ "Image Files (*.png *.jpeg *.jpg *.bmp)" ]
+                        nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp)"]
 
                         onAccepted: {
-                            console.log("You selected:", selectAvatarFileDialog.file)
+                            console.log("You selected:",
+                                        selectAvatarFileDialog.file)
                             isCropMD.visible = true
                         }
                     }
@@ -190,11 +211,18 @@ Popup {
                         display: AbstractButton.IconOnly
                         icon.source: "icons/elipsis.svg"
                         font.pointSize: 20
-                        rightPadding: 0
-                        leftPadding: 0
-                        bottomPadding: 0
-                        topPadding: 0
-                        onClicked: selectAvatarFileDialog.open()
+                        ToolTip.text: qsTr("选择照片")
+                        ToolTip.delay: 500
+                        ToolTip.visible: hovered
+
+                        onClicked: {
+                            if (textName.text.trim())
+                                selectAvatarFileDialog.open()
+                            else {
+                                errorMD.text = qsTr("请先填写人员姓名！")
+                                errorMD.visible = true
+                            }
+                        }
                     }
                 }
             }
@@ -324,7 +352,7 @@ Popup {
                                 anchors.fill: parent
                                 Repeater {
                                     id: autoConnectRepeater
-                                    model: ListModel { }
+                                    model: ListModel {}
 
                                     delegate: CheckBox {
                                         text: model.text
@@ -370,8 +398,7 @@ Popup {
                                     if (t <= startPerson.children.length) {
                                         textSsarMsg.text = qsTr("可能会影响其它子女排名！")
                                         textSsarMsg.color = "#FF8C00"
-                                    }
-                                    else {
+                                    } else {
                                         textSsarMsg.text = ""
                                     }
                                 } else {
@@ -469,7 +496,6 @@ Popup {
                 }
 
                 Row {
-                    leftPadding: 70
                     layoutDirection: Qt.LeftToRight
                     Layout.fillWidth: true
                     spacing: 61
@@ -485,12 +511,12 @@ Popup {
                         font.pointSize: 16
 
                         onClicked: {
-                            tempImages.forEach(function(path) {
+                            tempImages.forEach(function (path) {
                                 fileUtils.deleteFile(path)
                             })
                             tempImages.clear()
 
-                            thisPage.finished(false)
+                            thisPage.finished("", "")
                             thisPage.destroy()
                         }
                     }
@@ -507,15 +533,24 @@ Popup {
                         font.pointSize: 16
 
                         onClicked: {
-                            var currentPath = avatar.source.toString()
-                            tempImages.forEach(function(path) {
-                                if (path !== currentPath) {
+                            textName.text = textName.text.trim()
+                            if (textName.text === "") {
+                                errorMD.text = qsTr("请先填写人员姓名！")
+                                errorMD.visible = true
+                                return
+                            }
+
+                            if (tempImages.size > 0) {
+                                var currentPath = avatar.source.toString()
+                                tempImages.delete(currentPath)
+                                tempImages.forEach(function (path) {
                                     fileUtils.deleteFile(path)
-                                }
-                            })
-                            tempImages.clear()
+                                })
+                                tempImages.clear()
+                            }
+
                             saveData()
-                            thisPage.finished(true)
+                            thisPage.finished(textName.text, startPerson.name)
                             thisPage.destroy()
                         }
                     }
@@ -538,30 +573,47 @@ Popup {
 
         if (addType === "父") {
             if (startPerson.mother !== -1) {
-                autoConnectList.push({ id: startPerson.mother, name: pdb.getPerson(startPerson.mother).name })
+                autoConnectList.push({
+                                         "id": startPerson.mother,
+                                         "name": pdb.getPerson(
+                                                     startPerson.mother).name
+                                     })
             }
         }
         if (addType === "母") {
             if (startPerson.father !== -1)
-                autoConnectList.push({ id: startPerson.father, name: pdb.getPerson(startPerson.father).name })
+                autoConnectList.push({
+                                         "id": startPerson.father,
+                                         "name": pdb.getPerson(
+                                                     startPerson.father).name
+                                     })
         }
         if (addType === "子" || addType === "女") {
             textSSAR.text = startPerson.children.length + 1
             for (var j = 0; j < startPerson.marriages.length; j++) {
                 if (startPerson.marriages[j] !== -1)
-                    autoConnectList.push({ id: startPerson.marriages[j], name: pdb.getPerson(startPerson.marriages[j]).name })
+                    autoConnectList.push({
+                                             "id": startPerson.marriages[j],
+                                             "name": pdb.getPerson(
+                                                         startPerson.marriages[j]).name
+                                         })
             }
         }
         if (addType === "夫" || addType === "妻" || addType.includes("前")) {
             singleGroup.exclusive = false
             for (var k = 0; k < startPerson.children.length; k++) {
                 var getChild = pdb.getPerson(startPerson.children[k])
-                if (switchGender.checked)
+                if (switchGender.checked) {
                     if (getChild.mother === -1)
-                        autoConnectList.push({ id: startPerson.children[k], name: getChild.name })
-                else
-                    if (getChild.father === -1)
-                        autoConnectList.push({ id: startPerson.children[k], name: getChild.name })
+                        autoConnectList.push({
+                                                 "id": startPerson.children[k],
+                                                 "name": getChild.name
+                                             })
+                } else if (getChild.father === -1)
+                    autoConnectList.push({
+                                             "id": startPerson.children[k],
+                                             "name": getChild.name
+                                         })
             }
         }
 
@@ -569,8 +621,10 @@ Popup {
             isAutoConnect.visible = false
             autoConnectRect.visible = false
         } else {
-            for (let i = 0; i < autoConnectList.length; i++) {
-                autoConnectRepeater.model.append({ text: autoConnectList[i].name })
+            for (var i = 0; i < autoConnectList.length; i++) {
+                autoConnectRepeater.model.append({
+                                                     "text": autoConnectList[i].name
+                                                 })
             }
         }
     }
@@ -671,7 +725,7 @@ Popup {
             pdb.updateChildren(startPersonId)
 
             if (isAutoConnect.checked) {
-                for (let i = 0; i < singleGroup.buttons.length; i++) {
+                for (var i = 0; i < singleGroup.buttons.length; i++) {
                     if (singleGroup.buttons[i].checked) {
                         console.log(singleGroup.buttons[i].text, " checked ", i)
                         tmp = pdb.getPerson(autoConnectList[i].id)
@@ -706,7 +760,7 @@ Popup {
             }
 
             if (isAutoConnect.checked) {
-                for (let i = 0; i < singleGroup.buttons.length; i++) {
+                for (var i = 0; i < singleGroup.buttons.length; i++) {
                     if (singleGroup.buttons[i].checked) {
                         console.log(singleGroup.buttons[i].text, " checked ", i)
                         let p = pdb.getPerson(autoConnectList[i].id)
@@ -728,7 +782,7 @@ Popup {
             }
 
             if (isAutoConnect.checked) {
-                for (let i = 0; i < singleGroup.buttons.length; i++) {
+                for (var i = 0; i < singleGroup.buttons.length; i++) {
                     if (singleGroup.buttons[i].checked) {
                         console.log(singleGroup.buttons[i].text, " checked ", i)
                         let p = pdb.getPerson(autoConnectList[i].id)
@@ -746,7 +800,8 @@ Popup {
         if (textAvatarPath.text === "qrc:/qt/qml/content/icons/person.svg")
             addPerson.avatarPath = "icons/person.svg"
         else
-            addPerson.avatarPath = textAvatarPath.text.replace(conf.dbPrefix, "")
+            addPerson.avatarPath = textAvatarPath.text.replace(conf.dbPrefix,
+                                                               "")
         addPerson.name = textName.text
         addPerson.call = textCall.text
         addPerson.birthTraditional = birthSwitch.checked
@@ -772,7 +827,10 @@ Popup {
         }
 
         pdb.updatePerson(addPerson.id)
-        mainRect.allPerson.push({ pid: addPerson.id, name: addPerson.name })
+        mainRect.allPerson.push({
+                                    "pid": addPerson.id,
+                                    "name": addPerson.name
+                                })
 
         console.log("saveData End")
     }

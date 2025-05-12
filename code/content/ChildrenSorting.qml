@@ -21,7 +21,16 @@ Popup {
     property int isSync
     property Item onPressedItem: null
     property bool isChanged: false
-    signal finished(bool updateFlag)
+    signal finished(string update)
+
+    // Prevent event penetration
+    focus: true
+    MouseArea {
+        anchors.fill: parent
+        Keys.onPressed: {
+            event.accepted = true
+        }
+    }
 
     background: Rectangle {
         color: "#E5E5E5"
@@ -314,7 +323,7 @@ Popup {
                         return
                     }
 
-                    thisPage.finished(false)
+                    thisPage.finished("")
                     thisPage.destroy()
                 }
             }
@@ -343,9 +352,10 @@ Popup {
                 onClicked: {
                     if (unsavedFlag) {
                         saveData()
+                        thisPage.finished(startPerson.name)
                         unsavedFlag = false
                     }
-                    thisPage.finished(unsavedFlag)
+                    thisPage.finished("")
                     thisPage.destroy()
                 }
             }

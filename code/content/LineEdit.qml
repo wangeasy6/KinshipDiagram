@@ -12,14 +12,22 @@ Popup {
     padding: 0
     anchors.centerIn: parent
     closePolicy: Popup.CloseOnEscape
-    z: 2
 
     property var startPerson
     property var allPerson: []
     property bool isModernType: pdb.getSettings().marriageMode === "modern"
     property list<int> originalLine
     property bool isChanged: false
-    signal finished(bool result)
+    signal finished(string result)
+
+    // Prevent event penetration
+    focus: true
+    MouseArea {
+        anchors.fill: parent
+        Keys.onPressed: {
+            event.accepted = true
+        }
+    }
 
     background: Rectangle {
         color: "#E5E5E5"
@@ -124,6 +132,11 @@ Popup {
                         Layout.preferredHeight: 40
                         Layout.bottomMargin: 10
 
+                        hoverEnabled: true
+                        ToolTip.text: qsTr("删除")
+                        ToolTip.delay: 500
+                        ToolTip.visible: hovered
+
                         background: Rectangle {
                             id: delBG
                             width: parent.width
@@ -162,6 +175,11 @@ Popup {
                                          index - 1).lineType === lineType)
                         Layout.bottomMargin: 10
 
+                        hoverEnabled: true
+                        ToolTip.text: qsTr("上调")
+                        ToolTip.delay: 500
+                        ToolTip.visible: hovered
+
                         background: Rectangle {
                             id: upBG
                             width: parent.width
@@ -199,6 +217,11 @@ Popup {
                                  && (relationModel.get(
                                          index + 1).lineType === lineType)
                         Layout.bottomMargin: 10
+
+                        hoverEnabled: true
+                        ToolTip.text: qsTr("下调")
+                        ToolTip.delay: 500
+                        ToolTip.visible: hovered
 
                         background: Rectangle {
                             id: downBG
@@ -373,7 +396,10 @@ Popup {
                 text: "返回"
                 onClicked: {
                     checkChange()
-                    finished(isChanged)
+                    if (isChanged)
+                        finished(startPerson.name)
+                    else
+                        finished("")
                     thisPage.destroy()
                 }
             }

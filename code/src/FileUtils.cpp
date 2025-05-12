@@ -56,20 +56,19 @@ bool FileUtils::copyFile(QString _from, QString _to)
         _to.remove(0, 8);
     }
 
-    qDebug() << _from << " -> " << _to;
 
     QFile sourceFile(_from);
     if (!sourceFile.open(QIODevice::ReadOnly)) {
-        qDebug() << "Unable open file:" << _from;
+        qDebug() << "[copyFile] Unable open file:" << _from;
         return false;
     }
     sourceFile.close();
 
     bool result = QFile::copy(_from, _to);
     if (result) {
-        qDebug() << "File copied successfully.";
+        qDebug() << "[copyFile] Copied: " << _from << " -> " << _to;
     } else {
-        qDebug() << "File copying failed.";
+        qDebug() << "[copyFile] Copy failed.";
     }
 
     return result;

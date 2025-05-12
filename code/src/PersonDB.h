@@ -94,9 +94,10 @@ public:
     PersonDB();
     ~PersonDB();
     Q_INVOKABLE bool newMap(const QString path, const QString name);
+    Q_INVOKABLE bool checkMap(QString);
     Q_INVOKABLE bool loadDB(QString person_db_path = "default.sqlite3");
     // Q_PROPERTY(SettingsManager settings MEMBER m_settings NOTIFY settingsChanged)
-    Q_PROPERTY(QString error_msg READ errorMsg CONSTANT)
+    Q_PROPERTY(QString errorMsg READ errorMsg CONSTANT)
     Q_INVOKABLE PersonInfo* newFirstPerson();
     Q_INVOKABLE PersonInfo* getPersonByName(QString name);
     Q_INVOKABLE PersonInfo* getPerson(int index);

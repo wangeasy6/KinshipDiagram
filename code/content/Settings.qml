@@ -16,6 +16,15 @@ Popup {
     property int currentIndex: 0
     property var settingsManager: pdb.getSettings()
 
+    // Prevent event penetration
+    focus: true
+    MouseArea {
+        anchors.fill: parent
+        Keys.onPressed: {
+            event.accepted = true
+        }
+    }
+
     Component.onCompleted: {
         console.log("SettingsManager:", settingsManager)
         console.log("Language:", conf.language)
@@ -39,6 +48,9 @@ Popup {
         icon.width: 30
         icon.source: "icons/left-square.svg"
         display: AbstractButton.IconOnly
+        ToolTip.text: qsTr("返回")
+        ToolTip.delay: 500
+        ToolTip.visible: hovered
         
         onClicked: thisPage.close()
 

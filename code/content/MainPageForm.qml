@@ -28,6 +28,7 @@ Rectangle {
     property var allPerson: []
     property bool unsavedFlag: false
     property bool closeFlag: false
+    property var tempImages: new Set()
     signal closing
 
     PersonDB {
@@ -69,7 +70,8 @@ Rectangle {
             if (selectPrefix.includes(conf.dbPrefix))
                 cropForm.rename = filePath.substring(lastSlashIndex + 1)
             else
-                cropForm.rename = textName.text + pdb.getSettings().photoFormat
+                cropForm.rename = textName.text.trim() + pdb.getSettings(
+                            ).photoFormat
             cropForm.visible = true
         }
 
@@ -77,23 +79,29 @@ Rectangle {
             isCropMD.visible = false
             var filePath = selectAvatarFileDialog.file.toString()
             var lastSlashIndex = filePath.lastIndexOf("/")
-            var selectPrefix
-            var selectSuffix // = filePath.split(".").pop()
             if (lastSlashIndex !== -1) {
-                selectPrefix = filePath.substring(0, lastSlashIndex + 1)
-                console.log("selectPrefix:", selectPrefix)
+                var selectPrefix = filePath.substring(0, lastSlashIndex + 1)
                 if (selectPrefix.includes(conf.dbPrefix)) {
                     textAvatarPath.text = selectAvatarFileDialog.file
                     avatar.source = selectAvatarFileDialog.file
                 } else {
                     // Copy file to store
                     lastSlashIndex = filePath.lastIndexOf(".")
-                    selectSuffix = filePath.substring(lastSlashIndex)
-                    var saveTo = conf.dbPrefix + textName.text + selectSuffix
-                    console.log("Save to: ", saveTo)
-                    if (fileUtils.copyFileOverlay(filePath, saveTo)) {
+                    var selectSuffix = filePath.substring(lastSlashIndex)
+
+                    var saveTo = conf.dbPrefix + textName.text.trim(
+                                ) + selectSuffix
+                    var i = 1
+                    while (fileUtils.isFileExist(saveTo)) {
+                        saveTo = conf.dbPrefix + textName.text.trim(
+                                    ) + i.toString() + selectSuffix
+                        i++
+                    }
+
+                    if (fileUtils.copyFile(filePath, saveTo)) {
                         textAvatarPath.text = saveTo
                         avatar.source = saveTo
+                        tempImages.add(saveTo)
                     }
                 }
             }
@@ -159,6 +167,11 @@ Rectangle {
         property var replacement
 
         onAccepted: {
+            tempImages.forEach(function (path) {
+                fileUtils.deleteFile(path)
+            })
+            tempImages.clear()
+
             if (closeFlag)
                 Qt.quit()
             else
@@ -178,8 +191,8 @@ Rectangle {
         z: 2
 
         onSaved: path => {
-                     console.log("onSaved path:", path)
                      textAvatarPath.text = path
+                     tempImages.add(path)
                      avatar.source = path
                      avatar.update()
                      selectedPerson.imgAvatar.update()
@@ -187,6 +200,8 @@ Rectangle {
     }
 
     function setSidePerson(p) {
+        textName.forceActiveFocus()
+
         if (unsavedFlag) {
             isUnsaveDialog.replacement = p
             isUnsaveDialog.open()
@@ -260,6 +275,9 @@ Rectangle {
                     icon.width: 50
                     icon.source: "icons/settings.svg"
                     display: AbstractButton.IconOnly
+                    ToolTip.text: qsTr("设置")
+                    ToolTip.delay: 500
+                    ToolTip.visible: hovered
 
                     onClicked: {
                         let newNode = Qt.createComponent("Settings.qml")
@@ -277,6 +295,9 @@ Rectangle {
                     icon.width: 50
                     icon.source: "icons/info-circle.svg"
                     display: AbstractButton.IconOnly
+                    ToolTip.text: qsTr("帮助")
+                    ToolTip.delay: 500
+                    ToolTip.visible: hovered
 
                     onClicked: {
                         let newNode = Qt.createComponent("HelpInfo.qml")
@@ -333,26 +354,33 @@ Rectangle {
                             font.pointSize: 13
 
                             onCursorVisibleChanged: {
-                                console.log("searchInput get CursorVisible: ",
+                                console.log("searchInput onCursorVisibleChanged:",
                                             cursorVisible)
-                                resultListView.visible = cursorVisible
-                                if (cursorVisible && text === "") {
+                                if (cursorVisible) {
+                                    resultListView.visible = true
                                     resultModel.clear()
-                                    for (var i = 0; i < allPerson.length; i++) {
-                                        resultModel.append(allPerson[i])
-                                    }
-                                }
-                            }
-
-                            onTextChanged: {
-                                resultModel.clear()
-                                if (text) {
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
                                             resultModel.append(allPerson[i])
                                     }
+                                } else
+                                    hideSearchTimer.start()
+                            }
+
+                            onTextChanged: {
+                                resultModel.clear()
+                                for (var i = 0; i < allPerson.length; i++) {
+                                    if (allPerson[i].name.includes(text))
+                                        resultModel.append(allPerson[i])
                                 }
                             }
+                        }
+
+                        Timer {
+                            id: hideSearchTimer
+                            interval: 200
+                            repeat: false
+                            onTriggered: resultListView.visible = false
                         }
 
                         ListModel {
@@ -397,8 +425,9 @@ Rectangle {
                                 }
 
                                 onClicked: {
+                                    console.log("onClicked: ", model.name)
                                     searchInput.text = model.name
-                                    onSearchByName(searchInput.text)
+                                    // onSearchByName(searchInput.text)
                                     resultModel.clear()
                                 }
                             }
@@ -417,6 +446,9 @@ Rectangle {
                             icon.width: 60
                             icon.source: "icons/search.svg"
                             display: AbstractButton.IconOnly
+                            ToolTip.text: qsTr("搜索")
+                            ToolTip.delay: 500
+                            ToolTip.visible: hovered
 
                             onClicked: {
                                 resultModel.clear()
@@ -448,18 +480,39 @@ Rectangle {
                             height: 55
                             font.pointSize: 13
 
-                            onTextChanged: {
-                                startListModel.clear()
-                                if (text) {
+                            onCursorVisibleChanged: {
+                                if (cursorVisible) {
+                                    startListView.visible = true
+                                    startListModel.clear()
                                     startListModel.append({
-                                                              "name": qsTr("主人公")
+                                                              "name": qsTr(
+                                                                          "主人公")
                                                           })
                                     for (var i = 0; i < allPerson.length; i++) {
                                         if (allPerson[i].name.includes(text))
                                             startListModel.append(allPerson[i])
                                     }
+                                } else
+                                    hideStartTimer.start()
+                            }
+
+                            onTextChanged: {
+                                startListModel.clear()
+                                startListModel.append({
+                                                          "name": qsTr("主人公")
+                                                      })
+                                for (var i = 0; i < allPerson.length; i++) {
+                                    if (allPerson[i].name.includes(text))
+                                        startListModel.append(allPerson[i])
                                 }
                             }
+                        }
+
+                        Timer {
+                            id: hideStartTimer
+                            interval: 200
+                            repeat: false
+                            onTriggered: startListView.visible = false
                         }
 
                         ListModel {
@@ -527,9 +580,10 @@ Rectangle {
                             height: 55
                             font.pointSize: 13
 
-                            onTextChanged: {
-                                endListModel.clear()
-                                if (text) {
+                            onCursorVisibleChanged: {
+                                if (cursorVisible) {
+                                    endListView.visible = true
+                                    endListModel.clear()
                                     endListModel.append({
                                                             "name": qsTr("主人公")
                                                         })
@@ -537,8 +591,27 @@ Rectangle {
                                         if (allPerson[i].name.includes(text))
                                             endListModel.append(allPerson[i])
                                     }
+                                } else
+                                    hideEndTimer.start()
+                            }
+
+                            onTextChanged: {
+                                endListModel.clear()
+                                endListModel.append({
+                                                        "name": qsTr("主人公")
+                                                    })
+                                for (var i = 0; i < allPerson.length; i++) {
+                                    if (allPerson[i].name.includes(text))
+                                        endListModel.append(allPerson[i])
                                 }
                             }
+                        }
+
+                        Timer {
+                            id: hideEndTimer
+                            interval: 200
+                            repeat: false
+                            onTriggered: endListView.visible = false
                         }
 
                         ListModel {
@@ -602,6 +675,9 @@ Rectangle {
                             icon.width: 60
                             icon.source: "icons/search.svg"
                             display: AbstractButton.IconOnly
+                            ToolTip.text: qsTr("搜索")
+                            ToolTip.delay: 500
+                            ToolTip.visible: hovered
 
                             onClicked: {
                                 startListModel.clear()
@@ -744,19 +820,19 @@ Rectangle {
                             text: avatar.source
                             verticalAlignment: Text.AlignVCenter
                             font.pointSize: 10
+                            readOnly: true
 
-                            Keys.onReturnPressed: {
-                                if (textName.text) {
-                                    cropForm.avatarPath = text
-                                    cropForm.rename = textName.text + pdb.getSettings(
-                                                ).photoFormat
-                                    cropForm.visible = true
-                                } else {
-                                    errorMD.text = qsTr("请先填写人员姓名！")
-                                    errorMD.visible = true
-                                }
-                            }
-
+                            // Keys.onReturnPressed: {
+                            //     if (textName.text.trim()) {
+                            //         cropForm.avatarPath = text
+                            //         cropForm.rename = textName.text.trim() + pdb.getSettings(
+                            //                     ).photoFormat
+                            //         cropForm.visible = true
+                            //     } else {
+                            //         errorMD.text = qsTr("请先填写人员姓名！")
+                            //         errorMD.visible = true
+                            //     }
+                            // }
                             onTextChanged: {
                                 if (selectedPerson) {
                                     if (text !== selectedPerson.avatarPath)
@@ -771,7 +847,7 @@ Rectangle {
 
                         FileDialog {
                             id: selectAvatarFileDialog
-                            title: "Select a Photo"
+                            title: qsTr("选择照片")
                             // selectFolder: false
                             // selectMultiple: false
                             // supportedSchemes: [ "file" ]
@@ -779,14 +855,9 @@ Rectangle {
                             nameFilters: ["Image Files (*.png *.jpeg *.jpg *.bmp *.webp)"]
 
                             onAccepted: {
-                                console.log("You selected:",
+                                console.log("Your chosen:",
                                             selectAvatarFileDialog.file)
-                                if (textName.text)
-                                    isCropMD.visible = true
-                                else {
-                                    errorMD.text = qsTr("请先填写人员姓名！")
-                                    errorMD.visible = true
-                                }
+                                isCropMD.visible = true
                             }
                         }
 
@@ -798,15 +869,18 @@ Rectangle {
                             display: AbstractButton.IconOnly
                             icon.source: "icons/elipsis.svg"
                             font.pointSize: 20
-                            rightPadding: 0
-                            leftPadding: 0
-                            bottomPadding: 0
-                            topPadding: 0
                             ToolTip.text: qsTr("选择照片")
                             ToolTip.delay: 500
                             ToolTip.visible: hovered
 
-                            onClicked: selectAvatarFileDialog.open()
+                            onClicked: {
+                                if (textName.text.trim())
+                                    selectAvatarFileDialog.open()
+                                else {
+                                    errorMD.text = qsTr("请先填写人员姓名！")
+                                    errorMD.visible = true
+                                }
+                            }
                         }
                     }
 
@@ -1124,6 +1198,28 @@ Rectangle {
                         property var unsavedList: [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
                         onClicked: {
+                            if (!textName.text.trim()) {
+                                errorMD.text = qsTr("姓名不能为空！请填写！")
+                                errorMD.visible = true
+                                return
+                            }
+
+                            if (tempImages.size > 0) {
+                                tempImages.delete(textAvatarPath.text)
+                                tempImages.forEach(function (path) {
+                                    fileUtils.deleteFile(path)
+                                })
+                                tempImages.clear()
+
+                                if (selectedPerson.pi.avatarPath !== "icons/person.svg"
+                                        && textAvatarPath.text.toString(
+                                            ).indexOf(
+                                            selectedPerson.pi.avatarPath)) {
+                                    fileUtils.deleteFile(
+                                                conf.dbPrefix + selectedPerson.pi.avatarPath)
+                                }
+                            }
+
                             if (selectedPerson && unsavedFlag) {
                                 selectedPerson.avatarPath = textAvatarPath.text
                                 var savePi = selectedPerson.pi
@@ -1132,7 +1228,7 @@ Rectangle {
                                 else
                                     savePi.avatarPath = textAvatarPath.text.replace(
                                                 conf.dbPrefix, "")
-                                savePi.name = textName.text
+                                savePi.name = textName.text.trim()
                                 savePi.call = textCall.text
                                 savePi.subCall = textSubcall.text
                                 savePi.birthTraditional = birthSwitch.checked
@@ -1202,7 +1298,10 @@ Rectangle {
                 id: addMate
                 width: 50
                 height: 50
-                text: selectedPerson ? (selectedPerson.gender ? qsTr("夫") : qsTr("妻")) : qsTr("夫")
+                text: selectedPerson ? (selectedPerson.gender ? qsTr(
+                                                                    "夫") : qsTr(
+                                                                    "妻")) : qsTr(
+                                           "夫")
                 font.pointSize: 14
 
                 onClicked: {
@@ -1215,7 +1314,9 @@ Rectangle {
                 width: 100
                 height: 50
                 text: selectedPerson ? (selectedPerson.gender ? ((pdb.getSettings(
-                                                                      ).marriageMode === "modern") ? qsTr("前妻") : qsTr("前妻/妾")) : qsTr("前夫")) : qsTr("前夫")
+                                                                      ).marriageMode === "modern") ? qsTr("前妻") : qsTr("前妻/妾")) : qsTr(
+                                                                    "前夫")) : qsTr(
+                                           "前夫")
                 font.pointSize: text.length == 2 ? 14 : 12
 
                 onClicked: {
@@ -1384,7 +1485,8 @@ Rectangle {
                 onClicked: {
                     let ret = pdb.delPersonCheck(selectedPerson.pi)
                     if (ret) {
-                        deleteConfirmDialog.text = "确定删除：" + selectedPerson.name + "？"
+                        deleteConfirmDialog.text = qsTr(
+                                    "确定删除：") + selectedPerson.name + "？"
                         deleteConfirmDialog.open()
                     } else {
                         errorMD.text = pdb.errorMsg
@@ -1435,7 +1537,9 @@ Rectangle {
 
                 onClicked: {
                     if (selectedPerson.pi.id != pdb.getProtagonistId()) {
-                        isSetProtagonist.text = qsTr("确定设置：") + selectedPerson.name + qsTr(" 为主角？")
+                        isSetProtagonist.text = qsTr(
+                                    "确定设置：") + selectedPerson.name + qsTr(
+                                    " 为主角？")
                         isSetProtagonist.open()
                     }
                 }
@@ -1519,15 +1623,22 @@ Rectangle {
         // console.log("clearRvalueOfPersonList", stack.depth)
     }
 
+    function updatePageAfterAdd(newP, startP) {
+        console.log("Child page returned with result:", newP)
+        if (newP) {
+            stack.currentItem.redraw()
+            if (!stack.currentItem.searchInPage(newP)) {
+                searchInDB(startP)
+            } else
+                stack.currentItem.searchInPage(startP)
+        }
+    }
+
     function updatePage(result) {
         console.log("Child page returned with result:", result)
         if (result) {
             stack.currentItem.redraw()
-            // console.log("updatePage", stack.depth)
-            // for(var i = 0; i < stack.depth; i++)
-            // {
-            //     stack.children[i].redraw()
-            // }
+            onSearchByName(result)
         }
     }
 
@@ -1541,7 +1652,7 @@ Rectangle {
                                                 "addType": type
                                             })
             newP.beforeSave.connect(clearRvalueOfPersonList)
-            newP.finished.connect(updatePage)
+            newP.finished.connect(updatePageAfterAdd)
         } else if (newNode.status === Component.Error) {
             console.error("Create AddPerson component error:",
                           newNode.errorString())
@@ -1554,6 +1665,7 @@ Rectangle {
         if (newNode.status === Component.Ready) {
             let newP = newNode.createObject(mainRect, {
                                                 "startPersonId": selectedPerson.pi.id,
+                                                "startPerson": selectedPerson.pi,
                                                 "isSync": isSync
                                             })
             newP.finished.connect(updatePage)

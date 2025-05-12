@@ -104,7 +104,7 @@ bool PersonDB::addConnection(PersonInfo* p, int to_pid, int type)
         break;
     case 4:
         p->_children.append(to_pid);
-        if(p->_gender)
+        if (p->_gender)
             to_p->_father = p->_id;
         else
             to_p->_mother = p->_id;
@@ -132,6 +132,7 @@ const PersonInfo& PersonInfo::operator=(const PersonInfo& _p)
 PersonDB::PersonDB()
 {
     QQmlEngine::setObjectOwnership(&m_settings, QQmlEngine::CppOwnership);
+    m_pDb = QSqlDatabase::addDatabase("QSQLITE");
     qDebug() << "PersonDB inited.\r\n";
 }
 
@@ -139,7 +140,12 @@ PersonDB::PersonDB()
 PersonDB::~PersonDB()
 {
     qDebug() << "~PersonDB start.\r\n";
-    clearDB();
+    if (m_pDb.isOpen()) {
+        clearDB();
+        m_pDb.close();
+    }
+    if (QSqlDatabase::contains("QSQLITE"))
+        QSqlDatabase::removeDatabase("QSQLITE");
     qDebug() << "~PersonDB end.\r\n";
 }
 
@@ -147,7 +153,6 @@ PersonDB::~PersonDB()
 bool PersonDB::str2qlist(QList<int>* list, QString str)
 {
     if (str.isEmpty()) {
-        qDebug() << "[str2qlist] str is empty.";
         return false;
     }
 
@@ -186,10 +191,8 @@ bool PersonDB::newMap(const QString path, const QString name)
     QString mapPath = path + "/" + name;
     QString mapFile = mapPath + "/" + name + ".sqlite3";
 
-    if (QDir().mkdir(mapPath)) {
-        qDebug() << "文件夹创建成功！";
-    } else {
-        qDebug() << "文件夹创建失败！";
+    if (!QDir().mkdir(mapPath)) {
+        qDebug() << "Folder creation failed: " << mapPath;
         return false;
     }
 
@@ -199,10 +202,9 @@ bool PersonDB::newMap(const QString path, const QString name)
 
 bool PersonDB::initDB(const QString filePath)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(filePath);
-    if (!db.open()) {
-        qDebug() << "Error: Unable to open database!" << db.lastError().text();
+    m_pDb.setDatabaseName(filePath);
+    if (!m_pDb.open()) {
+        qDebug() << "Error: Unable to open database!" << m_pDb.lastError().text();
         return false;
     }
     qDebug() << "Database opened successfully:" << filePath;
@@ -234,16 +236,16 @@ bool PersonDB::initDB(const QString filePath)
 
     if (!query.exec(createTableSQL)) {
         qDebug() << "Failed to create table person_list:" << query.lastError().text();
-        db.close();
+        m_pDb.close();
         return false;
     }
     qDebug() << "Table created person_list successfully!";
 
     // 初始化设置管理器
-    m_settings.setDatabase(db);
+    m_settings.setDatabase(m_pDb);
     if (!m_settings.initSettingsTable()) {
         qWarning() << "Failed to initialize settings table";
-        db.close();
+        m_pDb.close();
         return false;
     }
 
@@ -263,6 +265,37 @@ void PersonDB::clearDB()
 }
 
 
+bool PersonDB::checkMap(QString dbPath)
+{
+    if (m_pDb.isOpen()) {
+        clearDB();
+        m_pDb.close();
+    }
+
+    m_pDb.setDatabaseName(dbPath);
+    if (!m_pDb.open()) {
+        qDebug() << "Error: Failed to connect database." << m_pDb.lastError().text();
+        return false;
+    }
+
+    QSqlQuery query;
+    if (!query.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='person_list';") || !query.next()) {
+        qDebug() << "Failed get table person_list." << query.lastError().text();
+        m_pDb.close();
+        return false;
+    }
+
+    if (!query.exec("SELECT name  FROM sqlite_master  WHERE type='table' AND name='user_settings';") || !query.next()) {
+        qDebug() << "Failed get table user_settings." << query.lastError().text();
+        m_pDb.close();
+        return false;
+    }
+
+    m_pDb.close();
+    return true;
+}
+
+
 bool PersonDB::loadDB(QString dbPath)
 {
     if (m_pDb.isOpen()) {
@@ -270,30 +303,23 @@ bool PersonDB::loadDB(QString dbPath)
         m_pDb.close();
     }
 
-    //建立并打开数据库
-    // if (QSqlDatabase::contains("qt_sql_default_connection")) {
-    //     m_pDb = QSqlDatabase::database("qt_sql_default_connection");
-    // } else {
-    //     m_pDb = QSqlDatabase::addDatabase("QSQLITE");
-    // }
-
-    m_pDb = QSqlDatabase::addDatabase("QSQLITE");
     m_pDb.setDatabaseName(dbPath);
     if (!m_pDb.open()) {
         qDebug() << "Error: Failed to connect database." << m_pDb.lastError().text();
         return false;
     }
+
     m_settings.setDatabase(m_pDb);
     m_settings.loadSettings();
 
     int pidCount = 0;
-    QSqlQuery sqlQuery;
-    if (sqlQuery.exec("select * from person_list")) {
+    QSqlQuery query;
+    if (query.exec("select * from person_list")) {
         int index;
-        while (sqlQuery.next()) {
-            int pid = sqlQuery.value(0).toInt();
+        while (query.next()) {
+            int pid = query.value(0).toInt();
             while (pid != pidCount) {
-                qDebug() << "Make null ptr:" << pidCount;
+                // qDebug() << "Make null ptr:" << pidCount;
                 m_personList.push_back(nullptr);
                 pidCount++;
             }
@@ -303,33 +329,33 @@ bool PersonDB::loadDB(QString dbPath)
             QQmlEngine::setObjectOwnership(p, QQmlEngine::CppOwnership);
             p->_id = pid;
             index = 1;
-            p->_protagonist = sqlQuery.value(index++).toBool();
+            p->_protagonist = query.value(index++).toBool();
             if (p->_protagonist)
                 m_protagonistId = pid;
-            p->_name = sqlQuery.value(index++).toString();
-            p->_avatarPath = sqlQuery.value(index++).toString();
-            p->_gender = sqlQuery.value(index++).toBool();
-            p->_call = sqlQuery.value(index++).toString();
-            p->_subCall = sqlQuery.value(index++).toString();
-            p->_birthday = sqlQuery.value(index++).toString();
-            p->_birthTraditional = sqlQuery.value(index++).toBool();
-            p->_fRanking = sqlQuery.value(index++).toInt();
-            p->_mRanking = sqlQuery.value(index++).toInt();
-            p->_isDead = sqlQuery.value(index++).toBool();
-            p->_deathTraditional = sqlQuery.value(index++).toBool();
-            p->_death = sqlQuery.value(index++).toString();
-            p->_notes = sqlQuery.value(index++).toString();
-            p->_father = sqlQuery.value(index++).toInt();
-            p->_mother = sqlQuery.value(index++).toInt();
-            QString children_str = sqlQuery.value(index++).toString();
+            p->_name = query.value(index++).toString();
+            p->_avatarPath = query.value(index++).toString();
+            p->_gender = query.value(index++).toBool();
+            p->_call = query.value(index++).toString();
+            p->_subCall = query.value(index++).toString();
+            p->_birthday = query.value(index++).toString();
+            p->_birthTraditional = query.value(index++).toBool();
+            p->_fRanking = query.value(index++).toInt();
+            p->_mRanking = query.value(index++).toInt();
+            p->_isDead = query.value(index++).toBool();
+            p->_deathTraditional = query.value(index++).toBool();
+            p->_death = query.value(index++).toString();
+            p->_notes = query.value(index++).toString();
+            p->_father = query.value(index++).toInt();
+            p->_mother = query.value(index++).toInt();
+            QString children_str = query.value(index++).toString();
             str2qlist(&p->_children, children_str);
-            QString marriageStr = sqlQuery.value(index++).toString();
+            QString marriageStr = query.value(index++).toString();
             str2qlist(&p->_marriages, marriageStr);
-            qDebug() << "LoadDB person: " << p->_name ;
+            // qDebug() << "LoadDB person: " << p->_name ;
             m_personList.push_back(p);
         }
     } else {
-        qDebug() << "Failed get Person List." << sqlQuery.lastError().text();
+        qDebug() << "Failed get Person List." << query.lastError().text();
         return false;
     }
 
@@ -368,29 +394,20 @@ PersonInfo* PersonDB::getPerson(int index)
 {
     if (index < 0 || index >= m_personList.length())
         return nullptr;
-    qDebug() << "Get person:" << index << m_personList[index]->_name;
+
+    // qDebug() << "Get person:" << index << m_personList[index]->_name;
     return m_personList[index];
 }
 
 
 int PersonDB::getProtagonistId()
 {
-    // int index = 0;
-    // for (; index < m_personList.count(); index++) {
-    //     if (m_personList[index]->_protagonist)
-    //         break;
-    // }
     return m_protagonistId;
 }
 
 
 PersonInfo* PersonDB::getProtagonist()
 {
-    // int index = 0;
-    // for (; index < m_personList.count(); index++) {
-    //     if (m_personList[index]->_protagonist)
-    //         break;
-    // }
     return getPerson(m_protagonistId);
 }
 
@@ -568,7 +585,7 @@ int PersonDB::getPersonLinks(const PersonInfo* p)
 bool PersonDB::delPersonCheck(const PersonInfo* p)
 {
     if (p->_id == getProtagonistId() && m_personList.length() > 2) {
-        m_errorMsg = "主人公仅在最后可删除!";
+        m_errorMsg = tr("主人公仅在最后可删除!");
         return false;
     }
 
@@ -576,29 +593,25 @@ bool PersonDB::delPersonCheck(const PersonInfo* p)
         return true;
 
     if (p->_father != -1 && getPersonLinks(getPerson(p->_father)) <= 1) {
-        m_errorMsg = "可能造成无法显示的人员:" + getPerson(p->_father)->_name +
-                     "，请先删除此人员！";
+        m_errorMsg = tr("可能造成人员无法显示，\r\n请先删除: ") + getPerson(p->_father)->_name;
         return false;
     }
 
     if (p->_mother != -1 && getPersonLinks(getPerson(p->_mother)) <= 1) {
-        m_errorMsg = "可能造成无法显示的人员:" + getPerson(p->_mother)->_name +
-                     "，请先删除此人员！";
+        m_errorMsg = tr("可能造成人员无法显示，\r\n请先删除: ") + getPerson(p->_mother)->_name;
         return false;
     }
 
     for (int i = 0; i < p->_marriages.length(); i++) {
         if (p->_marriages[i] != -1 && getPersonLinks(getPerson(p->_marriages[i])) <= 1) {
-            m_errorMsg = "可能造成无法显示的人员:" + getPerson(p->_marriages[i])->_name +
-                         "，请先删除此人员！";
+            m_errorMsg = tr("可能造成人员无法显示，\r\n请先删除: ") + getPerson(p->_marriages[i])->_name;
             return false;
         }
     }
 
     for (int i = 0; i < p->_children.length(); i++) {
         if (getPersonLinks(getPerson(p->_children[i])) <= 1) {
-            m_errorMsg = "可能造成无法显示的人员:" + getPerson(p->_children[i])->_name +
-                         "，请先删除此人员！";
+            m_errorMsg = tr("可能造成人员无法显示，\r\n请先删除: ") + getPerson(p->_children[i])->_name;
             return false;
         }
     }
@@ -636,7 +649,7 @@ bool PersonDB::delPerson(int index)
             updatePerson(p->_mother);
         }
     }
-    qDebug() << "clear marriages";
+
     for (int n = 0; n < p->_marriages.count(); n++) {
         if (n == 0) {
             if (p->_marriages[0] != -1) {
@@ -648,7 +661,7 @@ bool PersonDB::delPerson(int index)
             updatePerson(p->_marriages[n]);
         }
     }
-    qDebug() << "clear children";
+
     for (const int n : p->_children) {
         if (p->_gender) {
             m_personList[n]->_father = -1;
@@ -661,10 +674,8 @@ bool PersonDB::delPerson(int index)
     delPersonDB(index);
     delete m_personList[index];
     if (index == (m_personList.count() - 1)) {
-        qDebug() << "m_personList.removeLast()" ;
         m_personList.removeLast();
     } else {
-        qDebug() << "m_personList[index] = nullptr" ;
         m_personList[index] = nullptr;
     }
 
@@ -694,8 +705,8 @@ bool PersonDB::addPerson(PersonInfo* p)
     query.bindValue(":notes", p->_notes);
     query.bindValue(":father", p->_father);
     query.bindValue(":mother", p->_mother);
-    query.bindValue(":children", qlist2str(&p->_children) );
-    query.bindValue(":marriages", qlist2str(&p->_marriages) );
+    query.bindValue(":children", qlist2str(&p->_children));
+    query.bindValue(":marriages", qlist2str(&p->_marriages));
     query.bindValue(":id", p->_id);
 
     if (query.exec()) {
@@ -755,8 +766,8 @@ bool PersonDB::updatePerson(const PersonInfo* p)
     query.bindValue(":notes", p->_notes);
     query.bindValue(":father", p->_father);
     query.bindValue(":mother", p->_mother);
-    query.bindValue(":children", qlist2str(&p->_children) );
-    query.bindValue(":marriages", qlist2str(&p->_marriages) );
+    query.bindValue(":children", qlist2str(&p->_children));
+    query.bindValue(":marriages", qlist2str(&p->_marriages));
     query.bindValue(":id", p->_id);
 
     if (query.exec()) {

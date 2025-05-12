@@ -34,6 +34,15 @@ Rectangle {
                       }
     }
 
+    MessageDialog {
+        id: errorMD
+        title: qsTr("提示：")
+        visible: false
+        onAccepted: {
+            errorMD.visible = false
+        }
+    }
+
     Row {
         anchors.centerIn: parent
         width: 620
@@ -68,19 +77,21 @@ Rectangle {
 
                 FileDialog {
                     id: openFile
-                    title: qsTr("选择照片")
+                    title: qsTr("选择图谱")
                     nameFilters: ["DB Files (*.sqlite3)"]
 
                     onAccepted: {
                         var filePath = file.toString().replace("file:///", "")
-                        // fileStr.replace("file:///", "")
-                        // if(fileStr.match("file:///"))
-                        // {
-                        //     fileStr = fileStr.replace("file:///", "")
-                        // }
                         console.log("You selected:", filePath)
-                        updateHistory(filePath)
-                        openMap(filePath)
+                        if ( pdb.checkMap(filePath) ) {
+                            updateHistory(filePath)
+                            openMap(filePath)
+                        }
+                        else
+                        {
+                            errorMD.text = qsTr("所选图谱不可用！")
+                            errorMD.visible = true
+                        }
                     }
                 }
 

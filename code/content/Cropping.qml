@@ -20,6 +20,15 @@ Popup {
     property bool saveFlag: false
     signal saved(string path)
 
+    // Prevent event penetration
+    focus: true
+    MouseArea {
+        anchors.fill: parent
+        Keys.onPressed: {
+            event.accepted = true
+        }
+    }
+
     ColumnLayout {
         RowLayout {
             Layout.fillWidth: true
