@@ -17,9 +17,8 @@ const connectType = {
     "MOTHER": 1,
     "CHILDREN": 2,
     "MATE": 3,
-    "EX": 4
-    // SON: 4,
-    // GIRL: 5
+    "EX": 4,
+    "CONCU": 5
 }
 
 function clear() {
@@ -169,7 +168,7 @@ function calculatePosition(load) {
         load["posX"] = p1.x + mateShiftX
         load["posY"] = p1.y + 30
     }
-    if (type === connectType.EX) {
+    if (type === connectType.EX || type === connectType.CONCU) {
         let xPos = index * mateShiftX + mateShiftX
         load["posX"] = p1.x + xPos
         load["posY"] = p1.y + 30
@@ -208,10 +207,57 @@ function addByDepth(pi, piPos, pdb, anchor) {
     }
     console.log("addLoading Dep: ", pi.name)
 
+    let q_index = 9999
+    for (i = pi.marriages.length - 1; i > 0; i--)
+    {
+        if(pi.marriages[i] === -1){
+            q_index = i
+            break
+        }
+    }
+
     for (i = pi.marriages.length - 1; i >= 0; i--) // for(i=0; i < pi.marriages.length; i++)
     {
+        if(pi.marriages[i] === -1)
+            continue
+
         let type = i === 0 ? connectType.MATE : connectType.EX
-        if (pi.marriages[i] !== -1 && !isLoadedPerson(pi.marriages[i])) {
+        if(q_index !== 9999 && i>q_index) {
+            type = connectType.CONCU
+            if (!isLoadedPerson(pi.marriages[i])){
+                if (pi.marriages[0] === -1 || isLoadedPerson(pi.marriages[0]))  {
+                    node = {
+                        "start": piPos,
+                        "target": pi.marriages[i],
+                        "type": type,
+                        "index": i - 2,
+                        "anchor": anchor,
+                        "generation": gGeneration,
+                        "posZ": 0,
+                        "pi": pdb.getPerson(pi.marriages[i])
+                    }
+                } else {
+                    node = {
+                        "start": piPos,
+                        "target": pi.marriages[i],
+                        "type": type,
+                        "index": i-1,
+                        "anchor": anchor,
+                        "generation": gGeneration,
+                        "posZ": 0,
+                        "pi": pdb.getPerson(pi.marriages[i])
+                    }
+                }
+                calculatePosition(node)
+                gLoadingPersonNode.push(node)
+                pushPersonQueue(node.target)
+                if (!anchor)
+                    setBoundary(node.generation, node.posX)
+            }
+            continue
+        }
+
+        if (!isLoadedPerson(pi.marriages[i])) {
             if (pi.marriages[0] === -1 || isLoadedPerson(pi.marriages[0])) {
                 node = {
                     "start": piPos,

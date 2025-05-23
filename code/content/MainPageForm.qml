@@ -1254,7 +1254,7 @@ Rectangle {
 
     Rectangle {
         id: addToolRect
-        width: 430
+        width: 400
         height: 70
         color: "#d5d5d5"
         radius: 5
@@ -1311,16 +1311,36 @@ Rectangle {
 
             ToolButton {
                 id: addEx
-                width: 100
+                width: 70
                 height: 50
-                text: selectedPerson ? (selectedPerson.gender ? ((pdb.getSettings(
-                                                                      ).marriageMode === "modern") ? qsTr("前妻") : qsTr("前妻/妾")) : qsTr(
+                text: selectedPerson ? (selectedPerson.gender ? qsTr("前妻") : qsTr(
                                                                     "前夫")) : qsTr(
                                            "前夫")
-                font.pointSize: text.length == 2 ? 14 : 12
+                font.pointSize: 14
 
                 onClicked: {
                     console.log("width:", contentItem.width)
+                    addPerson(text)
+                }
+            }
+
+            ToolButton {
+                id: addConcubine
+                visible: selectedPerson && selectedPerson.gender
+                         && pdb.getSettings().isAncientMode()
+                width: 50
+                height: 50
+                text: qsTr("妾")
+                font.pointSize: 14
+
+                onVisibleChanged: {
+                    if (visible)
+                        addToolRect.width = 450
+                    else
+                        addToolRect.width = 400
+                }
+
+                onClicked: {
                     addPerson(text)
                 }
             }

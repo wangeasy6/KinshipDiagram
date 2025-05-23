@@ -41,7 +41,7 @@ Rectangle {
         height: 30
         smooth: true
         fillMode: Image.PreserveAspectFit
-        visible: type>2
+        visible: type > 2
         anchors.right: parent.left
         anchors.bottom: parent.bottom
         anchors.rightMargin: -195
@@ -126,18 +126,14 @@ Rectangle {
     }
 
     onTypeChanged: {
-        if (type > 2)
-        {
+        if (type > 2) {
             console.log(name, " type - ", type)
-            if (type === 3) {
+            if (type === 3)
                 maritalStatus.source = "icons/heart-red.svg"
-            }
-            else{
-                if(pdb.getSettings().marriageMode === "ancient")
-                    maritalStatus.source = "icons/heart-pink.svg"
-                else
-                    maritalStatus.source = "icons/heart-break.svg"
-            }
+            else if (type === 4)
+                maritalStatus.source = "icons/heart-break.svg"
+            else
+                maritalStatus.source = "icons/heart-pink.svg"
         }
     }
 

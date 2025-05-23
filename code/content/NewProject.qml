@@ -7,14 +7,15 @@ import Qt5Compat.GraphicalEffects
 Rectangle {
     id: thisPage
     width: 380
-    height: 200
+    height: 260
     // anchors.centerIn: parent
     x: parent.width / 2 - width / 2
     y: parent.height / 2 - height / 2
     color: "white"
     opacity: 1
 
-    signal newProject(string path, string name)
+    property var settingsManager: pdb.getSettings()
+    signal newProject(string path, string name, bool isModernMode)
 
     // Prevent event penetration
     focus: true
@@ -33,14 +34,14 @@ Rectangle {
 
     Rectangle {
         width: 360
-        height: 180
+        height: 240
         anchors.centerIn: parent
         color: "#c7B9D3EE"
 
         ColumnLayout {
             id: column
             width: 360
-            height: 180
+            height: 240
             anchors.centerIn: parent
 
             GridLayout {
@@ -117,6 +118,29 @@ Rectangle {
                         color: "red"
                     }
                 }
+
+                Label {
+                    text: qsTr(" 婚姻模式：")
+                    font.pointSize: 10
+                }
+
+                RowLayout {
+                    RadioButton {
+                        id: modernRadio
+                        text: qsTr("现代")
+                        checked: true
+                    }
+                    RadioButton {
+                        id: ancientRadio
+                        text: qsTr("古代")
+                    }
+
+                    Label {
+                        text: qsTr("（后续不可变更）")
+                        font.pointSize: 8
+                        color: "red"
+                    }
+                }
             }
 
             Row {
@@ -148,7 +172,7 @@ Rectangle {
 
                     onClicked: {
                         if (checkInput()) {
-                            newProject(textPath.text, textName.text)
+                            newProject(textPath.text, textName.text, modernRadio.checked)
                             thisPage.visible = false
                         } else {
                             shakeSequence.start()

@@ -58,7 +58,7 @@ public:
     int _father;
     int _mother;
     QList<int> _children;
-    QList<int> _marriages;   // 默认 index 0 是正室，只有Ex没有正室则存 -1
+    QList<int> _marriages;
 
 private:
     static qsizetype childrenCount(QQmlListProperty<int>*);
@@ -93,7 +93,7 @@ class PersonDB : public QObject
 public:
     PersonDB();
     ~PersonDB();
-    Q_INVOKABLE bool newMap(const QString path, const QString name);
+    Q_INVOKABLE bool newMap(const QString path, const QString name, bool isModernMode);
     Q_INVOKABLE bool checkMap(QString);
     Q_INVOKABLE bool loadDB(QString person_db_path = "default.sqlite3");
     // Q_PROPERTY(SettingsManager settings MEMBER m_settings NOTIFY settingsChanged)
@@ -111,6 +111,7 @@ public:
     Q_INVOKABLE PersonInfo* getMother(const int index);
     Q_INVOKABLE PersonInfo* addMate(const int index);
     Q_INVOKABLE PersonInfo* addEx(const int index);
+    Q_INVOKABLE PersonInfo* addConcubine(const int index);
     Q_INVOKABLE PersonInfo* addSon(const int index);
     Q_INVOKABLE PersonInfo* addDaughter(const int index);
     Q_INVOKABLE bool delPersonCheck(const PersonInfo* p);
@@ -141,7 +142,7 @@ private:
     QString qlist2str(const QList<int>* li);
     bool delPersonDB(int id);
     int getPersonLinks(const PersonInfo* p);
-    bool initDB(const QString);
+    bool initDB(const QString, bool);
     void clearDB();
     PersonInfo* getNextNewPerson();
 

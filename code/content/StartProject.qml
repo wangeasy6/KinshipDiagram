@@ -26,8 +26,8 @@ Rectangle {
         visible: false
         z: 2
 
-        onNewProject: (path, name) => {
-                          pdb.newMap(path, name)
+        onNewProject: (path, name, isModernMode) => {
+                          pdb.newMap(path, name, isModernMode)
                           var filePath = path + "/" + name + "/" + name + ".sqlite3"
                           updateHistory(filePath)
                           openMap(filePath)

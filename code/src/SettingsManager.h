@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE void setDatabase(const QSqlDatabase& db);
 
     // 初始化设置表
-    Q_INVOKABLE bool initSettingsTable();
+    Q_INVOKABLE bool initSettingsTable(bool);
 
     // 从数据库加载所有设置
     Q_INVOKABLE void loadSettings();
@@ -44,6 +44,7 @@ public:
     Q_INVOKABLE QString marriageMode() const;
     Q_INVOKABLE QString photoDisplay() const;
     Q_INVOKABLE bool isModernMode() const { return m_marriageMode == "modern";};
+    Q_INVOKABLE bool isAncientMode() const { return m_marriageMode == "ancient";};
 
     // 通用方法获取任意设置
     Q_INVOKABLE QVariant getSetting(const QString& key, const QVariant& defaultValue = QVariant());

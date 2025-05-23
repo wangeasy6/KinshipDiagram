@@ -62,19 +62,17 @@ bool PersonInfo::delConnection(int del_pid)
 
     for (int i = 0; i < _marriages.length(); i++) {
         if (_marriages[i] == del_pid) {
-            if (i == 0) {
-                _marriages[i] = -1;
-                return true;
-            } else {
+            if (i == 0)
+                _marriages[0] = -1;
+            else
                 _marriages.remove(i, 1);
-                return true;
-            }
+            return true;
         }
     }
 
     for (int i = 0; i < _children.length(); i++) {
-        if (_marriages[i] == del_pid) {
-            _marriages.remove(i, 1);
+        if (_children[i] == del_pid) {
+            _children.remove(i, 1);
             return true;
         }
     }
@@ -82,9 +80,28 @@ bool PersonInfo::delConnection(int del_pid)
     return false;
 }
 
+
+bool PersonDB::delConnection(int pid1, int pid2)
+{
+    PersonInfo* p1 = m_personList[pid1];
+    PersonInfo* p2 = m_personList[pid2];
+    qDebug() << "[delConnection]" << p1->_name << " : " << p2->_name;
+    if (p1->delConnection(pid2)) {
+        qDebug() << p1->_name << " delete: " << p2->_name;
+        updatePerson(p1);
+    }
+    if (p2->delConnection(pid1)) {
+        qDebug() << p2->_name << " delete: " << p1->_name;
+        updatePerson(p2);
+    }
+    return true;
+}
+
+
 bool PersonDB::addConnection(PersonInfo* p, int to_pid, int type)
 {
     PersonInfo* to_p = m_personList[to_pid];
+    int q_index = -1;
     switch (type) {
     case 0:
         p->_father = to_pid;
@@ -95,19 +112,34 @@ bool PersonDB::addConnection(PersonInfo* p, int to_pid, int type)
         to_p->_children.append(p->_id);
         break;
     case 2:
-        p->_marriages[0] = to_pid;
-        to_p->_marriages[0] = p->_id;
-        break;
-    case 3:
-        p->_marriages.append(to_pid);
-        to_p->_marriages.append(p->_id);
-        break;
-    case 4:
         p->_children.append(to_pid);
         if (p->_gender)
             to_p->_father = p->_id;
         else
             to_p->_mother = p->_id;
+        break;
+    case 3:
+        p->_marriages[0] = to_pid;
+        to_p->_marriages[0] = p->_id;
+        break;
+    case 4:
+        q_index = p->_marriages.indexOf(-1, 1);
+        if (q_index == -1)
+            p->_marriages.append(to_pid);
+        else
+            p->_marriages.insert(q_index, to_pid);
+
+        q_index = to_p->_marriages.indexOf(-1, 1);
+        if (q_index == -1)
+            to_p->_marriages.append(p->_id);
+        else
+            to_p->_marriages.insert(q_index, p->_id);
+        break;
+    case 5:
+        if (p->_marriages.indexOf(-1, 1) == -1)
+            p->_marriages.append(-1);
+        p->_marriages.append(to_pid);
+        to_p->_marriages[0] = p->_id;
         break;
     default:
         return false;
@@ -115,13 +147,6 @@ bool PersonDB::addConnection(PersonInfo* p, int to_pid, int type)
     updatePerson(p);
     updatePerson(to_p);
     return true;
-}
-
-bool PersonDB::delConnection(int pid1, int pid2)
-{
-    PersonInfo* p1 = m_personList[pid1];
-    PersonInfo* p2 = m_personList[pid2];
-    return p1->delConnection(pid2) && p2->delConnection(pid1);
 }
 
 const PersonInfo& PersonInfo::operator=(const PersonInfo& _p)
@@ -186,7 +211,7 @@ QString PersonDB::qlist2str(const QList<int>* li)
 }
 
 
-bool PersonDB::newMap(const QString path, const QString name)
+bool PersonDB::newMap(const QString path, const QString name, bool isModernMode)
 {
     QString mapPath = path + "/" + name;
     QString mapFile = mapPath + "/" + name + ".sqlite3";
@@ -196,11 +221,11 @@ bool PersonDB::newMap(const QString path, const QString name)
         return false;
     }
 
-    return initDB(mapFile);
+    return initDB(mapFile, isModernMode);
 }
 
 
-bool PersonDB::initDB(const QString filePath)
+bool PersonDB::initDB(const QString filePath, bool isModernMode)
 {
     m_pDb.setDatabaseName(filePath);
     if (!m_pDb.open()) {
@@ -243,7 +268,7 @@ bool PersonDB::initDB(const QString filePath)
 
     // 初始化设置管理器
     m_settings.setDatabase(m_pDb);
-    if (!m_settings.initSettingsTable()) {
+    if (!m_settings.initSettingsTable(isModernMode)) {
         qWarning() << "Failed to initialize settings table";
         m_pDb.close();
         return false;
@@ -519,12 +544,47 @@ PersonInfo* PersonDB::addEx(const int index)
 
     if (addPerson(p)) {
         if (m_personList[index]->_marriages.count() == 0)
-            p->_marriages.push_back(-1);
+            m_personList[index]->_marriages.push_back(-1);
+
+        if (getSettings()->isAncientMode() && m_personList[index]->_gender) { // Ancient Man
+            int q_index = m_personList[index]->_marriages.indexOf(-1, 1);
+            if (q_index != -1)
+                m_personList[index]->_marriages.insert(q_index, p->_id);
+            else
+                m_personList[index]->_marriages.push_back(p->_id);
+        } else {
+            m_personList[index]->_marriages.push_back(p->_id);
+        }
+        updatePerson(index);
+        return p;
+    }
+
+    return nullptr;
+}
+
+
+PersonInfo* PersonDB::addConcubine(const int index)
+{
+    // Only for ancient man
+    if (getSettings()->isModernMode() || !m_personList[index]->_gender)
+        return nullptr;
+
+    PersonInfo* p = getNextNewPerson();
+    p->_gender = !m_personList[index]->_gender;
+    p->_marriages.push_back(index);
+
+    if (addPerson(p)) {
+        if (m_personList[index]->_marriages.count() == 0)
+            m_personList[index]->_marriages.push_back(-1);
+        int q_index = m_personList[index]->_marriages.indexOf(-1, 1);
+        if (q_index == -1)
+            m_personList[index]->_marriages.push_back(-1);
         m_personList[index]->_marriages.push_back(p->_id);
         updatePerson(index);
         return p;
-    } else
-        return nullptr;
+    }
+
+    return nullptr;
 }
 
 
@@ -771,6 +831,7 @@ bool PersonDB::updatePerson(const PersonInfo* p)
     query.bindValue(":id", p->_id);
 
     if (query.exec()) {
+        qDebug() << "Update person success: " << p->_name;
         return true;
     }
 

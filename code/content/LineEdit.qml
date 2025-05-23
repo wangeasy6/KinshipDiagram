@@ -6,7 +6,7 @@ import Qt.labs.platform
 Popup {
     id: thisPage
     modal: true
-    visible : true
+    visible: true
     width: 500
     height: 600
     padding: 0
@@ -15,7 +15,7 @@ Popup {
 
     property var startPerson
     property var allPerson: []
-    property bool isModernType: pdb.getSettings().marriageMode === "modern"
+    // property bool isModernType: pdb.getSettings().marriageMode === "modern"
     property list<int> originalLine
     property bool isChanged: false
     signal finished(string result)
@@ -52,10 +52,8 @@ Popup {
                                "avatarPath": p.avatarPath
                            })
 
-            if (delData.lineType <= 2) {
-                typeModel.setProperty(
-                            delData.lineType,
-                            "enabled", true)
+            if (delData.lineType < 2 || delData.lineType === 3) {
+                typeModel.setProperty(delData.lineType, "enabled", true)
                 onModelChanged()
             }
             relationModel.remove(delData.index)
@@ -103,7 +101,8 @@ Popup {
                         id: lineTypeCombo
                         Layout.preferredWidth: 120
                         Layout.preferredHeight: 40
-                        model: startPerson.gender ? (isModernType ? [qsTr("父亲"), qsTr("母亲"), qsTr("妻子"), qsTr("前妻"), qsTr("子女")] : [qsTr("父亲"), qsTr("母亲"), qsTr("妻子"), qsTr("妾"), qsTr("子女")]) : (isModernType ? [qsTr("父亲"), qsTr("母亲"), qsTr("老公"), qsTr("前夫"), qsTr("子女")] : [qsTr("父亲"), qsTr("母亲"), qsTr("夫君"), qsTr("前夫"), qsTr("子女")])
+                        model: startPerson.gender ? (pdb.getSettings(
+                                                         ).isModernMode() ? [qsTr("父亲"), qsTr("母亲"), qsTr("子女"), qsTr("妻子"), qsTr("前妻")] : [qsTr("父亲"), qsTr("母亲"), qsTr("子女"), qsTr("妻子"), qsTr("前妻"), qsTr("妾")]) : (pdb.getSettings().isModernMode() ? [qsTr("父亲"), qsTr("母亲"), qsTr("子女"), qsTr("老公"), qsTr("前夫")] : [qsTr("父亲"), qsTr("母亲"), qsTr("子女"), qsTr("夫君"), qsTr("前夫")])
                         currentIndex: lineType
                         enabled: false
                     }
@@ -154,20 +153,25 @@ Popup {
                         }
 
                         onClicked: {
-                            delConfirmMD.delData = {"pid":personId, "index":index, "lineType":lineTypeCombo.currentIndex}
-                            delConfirmMD.text = qsTr("确定删除和") + personName + qsTr("的关系？")
+                            delConfirmMD.delData = {
+                                "pid": personId,
+                                "index": index,
+                                "lineType": lineTypeCombo.currentIndex
+                            }
+                            delConfirmMD.text = qsTr(
+                                        "确定删除和") + personName + qsTr("的关系？")
                             delConfirmMD.visible = true
                         }
                     }
 
                     Item {
-                        visible: lineType <= 2
+                        visible: lineType < 2 || lineType === 3
                         Layout.preferredWidth: 90
                     }
 
                     // 上升按钮(婚姻和子女关系)
                     Button {
-                        visible: 2 < lineType
+                        visible: lineType === 2 || lineType > 3
                         Layout.preferredWidth: 40
                         Layout.preferredHeight: 40
                         enabled: index > 0
@@ -198,7 +202,7 @@ Popup {
 
                         onClicked: {
                             console.log(personName, " up")
-                            if (lineType === 3)
+                            if (lineType > 3)
                                 pdb.adjustMarriageRanking(startPerson,
                                                           personId, 1)
                             else
@@ -210,7 +214,7 @@ Popup {
 
                     // 下降按钮(婚姻和子女关系)
                     Button {
-                        visible: 2 < lineType
+                        visible: lineType === 2 || lineType > 3
                         Layout.preferredWidth: 40
                         Layout.preferredHeight: 40
                         enabled: index < relationModel.count - 1
@@ -241,7 +245,7 @@ Popup {
 
                         onClicked: {
                             console.log(personName, " down")
-                            if (lineType === 3)
+                            if (lineType > 3)
                                 pdb.adjustMarriageRanking(startPerson,
                                                           personId, -1)
                             else
@@ -355,10 +359,16 @@ Popup {
                             pdb.addConnection(startPerson, selectedPerson.pid,
                                               newLineTypeCombo.currentIndex)
                             var toIndex = 0
-                            for (toIndex = relationModel.count - 1; toIndex >= 0; toIndex--)
-                                if (relationModel.get(
-                                            toIndex).lineType <= newLineTypeCombo.currentIndex)
-                                    break
+                            if (newLineTypeCombo.currentIndex === 2)
+                                toIndex = relationModel.count - 1
+                            else
+                                for (toIndex = relationModel.count - 1; toIndex >= 0; toIndex--) {
+                                    var t = relationModel.get(toIndex).lineType
+                                            === 2 ? 6 : relationModel.get(
+                                                        toIndex).lineType
+                                    if (t <= newLineTypeCombo.currentIndex)
+                                        break
+                                }
 
                             relationModel.insert(toIndex + 1, {
                                                      "typeText": newLineTypeCombo.currentText,
@@ -373,7 +383,8 @@ Popup {
                                     allPerson.splice(i, 1)
                             personModel.remove(personCombo.currentIndex)
 
-                            if (newLineTypeCombo.currentIndex <= 2) {
+                            if (newLineTypeCombo.currentIndex < 2
+                                    || newLineTypeCombo.currentIndex === 3) {
                                 typeModel.setProperty(
                                             newLineTypeCombo.currentIndex,
                                             "enabled", false)
@@ -472,9 +483,13 @@ Popup {
         }
         var i
 
+        typeModel.append({
+                             "text": "子女",
+                             "enabled": true
+                         })
         if (startPerson.gender) // male
         {
-            if (pdb.getSettings().marriageMode === "modern") {
+            if (pdb.getSettings().isModernMode()) {
                 typeModel.append({
                                      "text": "妻子",
                                      "enabled": true
@@ -489,12 +504,16 @@ Popup {
                                      "enabled": true
                                  })
                 typeModel.append({
+                                     "text": "前妻",
+                                     "enabled": true
+                                 })
+                typeModel.append({
                                      "text": "妾",
                                      "enabled": true
                                  })
             }
         } else {
-            if (pdb.getSettings().marriageMode === "modern") {
+            if (pdb.getSettings().isModernMode()) {
                 typeModel.append({
                                      "text": "老公",
                                      "enabled": true
@@ -514,10 +533,6 @@ Popup {
                                  })
             }
         }
-        typeModel.append({
-                             "text": "子女",
-                             "enabled": true
-                         })
 
         // 加载父亲母亲关系
         if (startPerson.father !== -1) {
@@ -551,17 +566,20 @@ Popup {
             }
         }
 
+        let q_index = 0
         // 加载婚姻关系
         for (i = 0; i < startPerson.marriages.length; i++) {
+            if (startPerson.marriages[i] === -1 && i !== 0)
+                q_index = 1
             if (startPerson.marriages[i] !== -1) {
                 var spouse = pdb.getPerson(startPerson.marriages[i])
                 if (spouse) {
                     if (i === 0) {
-                        typeModel.setProperty(2, "enabled", false)
+                        typeModel.setProperty(3, "enabled", false)
                         onModelChanged()
                     }
 
-                    var index = 2 + ((i === 0) ? 0 : 1)
+                    var index = 3 + ((i === 0) ? 0 : 1) + q_index
                     console.log("relationModel.append:", index,
                                 typeModel.get(index).text)
                     relationModel.append({
@@ -583,7 +601,7 @@ Popup {
                 if (child) {
                     relationModel.append({
                                              "typeText": "子女",
-                                             "lineType": 4,
+                                             "lineType": 2,
                                              "personId": child.id,
                                              "personName": child.name,
                                              "avatarPath": child.avatarPath

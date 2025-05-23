@@ -599,7 +599,7 @@ Popup {
                                          })
             }
         }
-        if (addType === "夫" || addType === "妻" || addType.includes("前")) {
+        if (addType === "夫" || addType === "妻" || addType === "妾" || addType.includes("前")) {
             singleGroup.exclusive = false
             for (var k = 0; k < startPerson.children.length; k++) {
                 var getChild = pdb.getPerson(startPerson.children[k])
@@ -776,6 +776,28 @@ Popup {
         }
         if (addType.includes("前")) {
             addPerson = pdb.addEx(startPerson.id)
+            if (!addPerson) {
+                console.log("Add Person failed.")
+                return
+            }
+
+            if (isAutoConnect.checked) {
+                for (var i = 0; i < singleGroup.buttons.length; i++) {
+                    if (singleGroup.buttons[i].checked) {
+                        console.log(singleGroup.buttons[i].text, " checked ", i)
+                        let p = pdb.getPerson(autoConnectList[i].id)
+                        if (addPerson.gender)
+                            p.father = addPerson.id
+                        else
+                            p.mother = addPerson.id
+                        pdb.updatePerson(autoConnectList[i].id)
+                        addPerson.children.push(autoConnectList[i].id)
+                    }
+                }
+            }
+        }
+        if (addType === "妾") {
+            addPerson = pdb.addConcubine(startPerson.id)
             if (!addPerson) {
                 console.log("Add Person failed.")
                 return

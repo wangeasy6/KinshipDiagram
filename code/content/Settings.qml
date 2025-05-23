@@ -195,6 +195,7 @@ Popup {
             GroupBox {
                 title: qsTr("婚姻关系模式")
                 Layout.fillWidth: true
+                enabled: false
                 
                 RowLayout {
                     RadioButton {

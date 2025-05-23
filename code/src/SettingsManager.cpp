@@ -52,7 +52,7 @@ void SettingsManager::setDatabase(const QSqlDatabase& db)
     m_db = db;
 }
 
-bool SettingsManager::initSettingsTable()
+bool SettingsManager::initSettingsTable(bool isModernMode)
 {
     if (!m_db.isOpen()) {
         qWarning() << "Database not open";
@@ -70,12 +70,16 @@ bool SettingsManager::initSettingsTable()
         return false;
     }
 
+    QString sql = QString(
+        "INSERT OR IGNORE INTO user_settings (setting_key, setting_value, description) VALUES "
+        "('sql_version', '0.2.0', '数据库定义版本号'), "
+        "('photo_format', '.png', '默认裁剪保存照片格式：.png/.jpg'), "
+        "('marriage_mode', '%1', '婚姻关系模式：modern(现代)/ancient(古代)'), "
+        "('photo_display', 'with_photo', '照片显示模式：with_photo/no_photo');"
+    ).arg(isModernMode ? "modern" : "ancient");
+
     // Insert default settings
-    if (!query.exec("INSERT OR IGNORE INTO user_settings (setting_key, setting_value, description) VALUES "
-                    "('sql_version', '0.2.0', '数据库定义版本号'), "
-                    "('photo_format', '.png', '默认裁剪保存照片格式：.png/.jpg'), "
-                    "('marriage_mode', 'modern', '婚姻关系模式：modern(现代)/ancient(古代)'), "
-                    "('photo_display', 'with_photo', '照片显示模式：with_photo/no_photo');")) {
+    if (!query.exec( sql )) {
         qWarning() << "Failed to insert default settings:" << query.lastError().text();
         return false;
     }
@@ -254,7 +258,6 @@ bool SettingsManager::resetToDefaults()
     // Reset to default values
     if (!query.exec("UPDATE user_settings SET setting_value = CASE "
                     "WHEN setting_key = 'photo_format' THEN '.png' "
-                    "WHEN setting_key = 'marriage_mode' THEN 'modern' "
                     "WHEN setting_key = 'photo_display' THEN 'with_photo' "
                     "ELSE setting_value END")) {
         qWarning() << "Failed to reset settings:" << query.lastError().text();
